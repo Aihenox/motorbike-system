@@ -79,25 +79,84 @@ def procesar_salida(ticket):
             ZoneInfo("America/Bogota")
         )
 
-        if modalidad == "Dia":
+        if modalidad == "Noche":
 
-            if tipo == "Moto":
+            from datetime import time
 
-                valor = tarifas["dia_moto"]
-
-            else:
-
-                valor = tarifas["dia_carro"]
-
-        elif modalidad == "Noche":
-
+            # ==========================
+            # TARIFA NOCHE BASE
+            # ==========================
             if tipo == "Moto":
 
                 valor = tarifas["noche_moto"]
 
+                tarifa_hora = tarifas["hora_moto"]
+
             else:
 
                 valor = tarifas["noche_carro"]
+
+                tarifa_hora = tarifas["hora_carro"]
+
+            # ==========================
+            # DESPUES DE 8:10 AM
+            # ==========================
+            limite = hora_salida.replace(
+
+                hour=8,
+
+                minute=10,
+
+                second=0,
+
+                microsecond=0
+            )
+
+            if hora_salida >= limite:
+
+                diferencia = (
+
+                    hora_salida - limite
+
+                )
+
+                minutos = int(
+
+                    diferencia.total_seconds()
+
+                    / 60
+                )
+
+                horas = minutos // 60
+
+                minutos_restantes = (
+
+                    minutos % 60
+                )
+
+                horas_extra = horas
+
+                minutos_gracia = tarifas.get(
+
+                    "minutos_gracia",
+
+                    10
+                )
+
+                if minutos_restantes > minutos_gracia:
+
+                    horas_extra += 1
+
+                if minutos > 0 and horas_extra <= 0:
+
+                    horas_extra = 1
+
+                valor += (
+
+                    horas_extra
+
+                    * tarifa_hora
+                )
 
         else:
 

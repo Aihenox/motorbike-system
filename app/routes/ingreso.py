@@ -1,4 +1,6 @@
 import logging
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from flask import (
     Blueprint,
@@ -40,8 +42,28 @@ ingreso_bp = Blueprint(
 @login_required
 def ingreso():
 
+    ahora = datetime.now(
+
+        ZoneInfo(
+            "America/Bogota"
+        )
+    )
+
+    permitir_noche = (
+
+        ahora.hour >= 19
+
+        or
+
+        ahora.hour < 8
+    )
+
     return render_template(
-        "ingreso.html"
+
+        "ingreso.html",
+
+        permitir_noche=
+            permitir_noche
     )
 
 

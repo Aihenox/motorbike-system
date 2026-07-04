@@ -20,9 +20,6 @@ def actualizar_tarifas(
     hora_moto,
     hora_carro,
 
-    dia_moto,
-    dia_carro,
-
     noche_moto,
     noche_carro,
 
@@ -35,8 +32,6 @@ def actualizar_tarifas(
     valores = {
         "hora_moto": hora_moto,
         "hora_carro": hora_carro,
-        "dia_moto": dia_moto,
-        "dia_carro": dia_carro,
         "noche_moto": noche_moto,
         "noche_carro": noche_carro,
         "mensualidad_moto": mensualidad_moto,
@@ -66,9 +61,6 @@ def actualizar_tarifas(
 
         hora_moto,
         hora_carro,
-
-        dia_moto,
-        dia_carro,
 
         noche_moto,
         noche_carro,

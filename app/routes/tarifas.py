@@ -44,9 +44,6 @@ def tarifas():
                 int(request.form["hora_moto"]),
                 int(request.form["hora_carro"]),
 
-                int(request.form["dia_moto"]),
-                int(request.form["dia_carro"]),
-
                 int(request.form["noche_moto"]),
                 int(request.form["noche_carro"]),
 

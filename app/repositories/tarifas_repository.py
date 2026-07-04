@@ -43,9 +43,6 @@ def actualizar_tarifas_db(
     hora_moto,
     hora_carro,
 
-    dia_moto,
-    dia_carro,
-
     noche_moto,
     noche_carro,
 
@@ -70,9 +67,6 @@ def actualizar_tarifas_db(
                     hora_moto = %s,
                     hora_carro = %s,
 
-                    dia_moto = %s,
-                    dia_carro = %s,
-
                     noche_moto = %s,
                     noche_carro = %s,
 
@@ -87,9 +81,6 @@ def actualizar_tarifas_db(
 
                 hora_moto,
                 hora_carro,
-
-                dia_moto,
-                dia_carro,
 
                 noche_moto,
                 noche_carro,
@@ -111,9 +102,6 @@ def actualizar_tarifas_db(
                     hora_moto = ?,
                     hora_carro = ?,
 
-                    dia_moto = ?,
-                    dia_carro = ?,
-
                     noche_moto = ?,
                     noche_carro = ?,
 
@@ -128,9 +116,6 @@ def actualizar_tarifas_db(
 
                 hora_moto,
                 hora_carro,
-
-                dia_moto,
-                dia_carro,
 
                 noche_moto,
                 noche_carro,

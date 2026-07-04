@@ -97,6 +97,37 @@ def registrar_ingreso(
 
     hora_actual = obtener_fecha_actual()
 
+    # ==========================================
+    # VALIDAR TARIFA NOCHE
+    # ==========================================
+    if modalidad == "Noche":
+
+        hora = hora_actual.time()
+
+        permitido = (
+
+            hora.hour >= 19
+
+            or
+
+            hora.hour < 8
+        )
+
+        if not permitido:
+
+            return {
+
+                "success": False,
+
+                "message":
+                (
+                    "La tarifa noche "
+                    "solo puede registrarse "
+                    "entre las 7:00 PM "
+                    "y las 8:00 AM"
+                )
+            }
+
     ticket = insertar_ingreso_db(
 
         placa,

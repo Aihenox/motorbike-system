@@ -348,13 +348,13 @@
                                     Hora / Fracción
                                 </option>
 
-                                <option value="Dia">
-                                    Tarifa Día
-                                </option>
+                                {% if permitir_noche %}
 
                                 <option value="Noche">
                                     Tarifa Noche
                                 </option>
+
+                                {% endif %}
 
                             </select>
 
