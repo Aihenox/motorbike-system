@@ -60,7 +60,7 @@ def procesar_salida(ticket):
         modalidad = "Hora"
 
     tarifas = obtener_tarifa_activa()
-
+    
     if modalidad == "Hora":
 
         valor, hora_salida = calcular_valor(
@@ -82,7 +82,7 @@ def procesar_salida(ticket):
         if modalidad == "Noche":
 
             from datetime import time
-
+            
             # ==========================
             # TARIFA NOCHE BASE
             # ==========================
@@ -99,9 +99,11 @@ def procesar_salida(ticket):
                 tarifa_hora = tarifas["hora_carro"]
 
             # ==========================
-            # DESPUES DE 8:10 AM
+            # DESPUES DE LAS 8:10 AM DEL DIA SIGUIENTE
             # ==========================
-            limite = hora_salida.replace(
+            from datetime import timedelta
+
+            limite = ingreso_dt.replace(
 
                 hour=8,
 
@@ -110,15 +112,12 @@ def procesar_salida(ticket):
                 second=0,
 
                 microsecond=0
-            )
 
-            if hora_salida >= limite:
+            ) + timedelta(days=1)
 
-                diferencia = (
+            if hora_salida > limite:
 
-                    hora_salida - limite
-
-                )
+                diferencia = hora_salida - limite
 
                 minutos = int(
 
@@ -129,10 +128,7 @@ def procesar_salida(ticket):
 
                 horas = minutos // 60
 
-                minutos_restantes = (
-
-                    minutos % 60
-                )
+                minutos_restantes = minutos % 60
 
                 horas_extra = horas
 
@@ -147,16 +143,11 @@ def procesar_salida(ticket):
 
                     horas_extra += 1
 
-                if minutos > 0 and horas_extra <= 0:
+                if horas_extra <= 0:
 
                     horas_extra = 1
 
-                valor += (
-
-                    horas_extra
-
-                    * tarifa_hora
-                )
+                valor += horas_extra * tarifa_hora
 
         else:
 
