@@ -106,7 +106,7 @@ def registrar_ingreso(
 
         permitido = (
 
-            hora.hour >= 19
+            hora.hour >= 18
 
             or
 

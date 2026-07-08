@@ -51,7 +51,7 @@ def ingreso():
 
     permitir_noche = (
 
-        ahora.hour >= 19
+        ahora.hour >= 18
 
         or
 
