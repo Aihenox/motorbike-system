@@ -54,6 +54,10 @@ from app.services.lavadero_service import (
     contar_lavados_placa_db
 )
 
+from app.services.dashboard_lavadero_service import (
+    obtener_dashboard
+)
+
 from app.services.historial_lavadero_service import (
 
     listar_historial_lavadero,
@@ -795,3 +799,29 @@ def validar_admin():
 
         }), 500
     
+
+# ==========================================
+# DASHBOARD LAVADERO AJAX
+# ==========================================
+@lavadero_bp.route(
+    "/lavadero/dashboard",
+    methods=["POST"]
+)
+@login_required
+def dashboard_lavadero_ajax():
+
+    datos = request.get_json()
+
+    dashboard = obtener_dashboard(
+
+        datos
+
+    )
+
+    return jsonify({
+
+        "success": True,
+
+        **dashboard
+
+    })

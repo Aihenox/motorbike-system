@@ -84,6 +84,8 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <script src="{{ url_for('static', filename='js/csrf.js') }}" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard_lavadero.js') }}" defer></script>
 
 </head>
 
@@ -293,17 +295,34 @@
 
         </div>
 
-        <!-- EXCEL -->
-        <a
-            href="/historial/lavadero/excel?placa={{ placa }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&responsable={{ responsable }}"
-            class="btn btn-success"
-        >
+        <div class="d-flex gap-2">
 
-            <i class="bi bi-file-earmark-excel"></i>
+            <!-- DASHBOARD -->
+            <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDashboardLavadero"
+            >
 
-            Descargar Excel
+                <i class="bi bi-bar-chart-fill"></i>
 
-        </a>
+                Dashboard
+
+            </button>
+
+            <!-- EXCEL -->
+            <a
+                href="/historial/lavadero/excel?placa={{ placa }}&fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}&responsable={{ responsable }}"
+                class="btn btn-success"
+            >
+
+                <i class="bi bi-file-earmark-excel"></i>
+
+                Descargar Excel
+
+            </a>
+
+        </div>
 
         <!-- CANTIDAD -->
         <div>
@@ -1166,6 +1185,349 @@ async function guardarEdicion(){
     </div>
 
 </div>
+<!-- ===================================== -->
+<!-- DASHBOARD LAVADERO -->
+<!-- ===================================== -->
 
+<div
+    class="modal fade"
+    id="modalDashboardLavadero"
+    tabindex="-1"
+    data-bs-backdrop="static">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header bg-primary text-white">
+
+                <h4 class="modal-title">
+
+                    <i class="bi bi-bar-chart-fill"></i>
+
+                    Dashboard Analítico Lavadero
+
+                </h4>
+
+                <button
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <!-- ========================= -->
+                <!-- FILTROS -->
+                <!-- ========================= -->
+
+                <div class="card mb-4">
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <!-- PERIODO -->
+                            <div class="col-lg-4">
+
+                                <label class="fw-bold">
+
+                                    Período
+
+                                </label>
+
+                                <select
+                                    class="form-select"
+                                    id="periodoDashboard">
+
+                                    <option value="dia">
+                                        Día
+                                    </option>
+
+                                    <option value="semana">
+                                        Semana
+                                    </option>
+
+                                    <option value="mes">
+                                        Mes
+                                    </option>
+
+                                    <option value="rango">
+                                        Rango personalizado
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                            <!-- FECHA INICIAL -->
+                            <div class="col-lg-4">
+
+                                <label class="fw-bold">
+
+                                    Fecha inicial
+
+                                </label>
+
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="dashboardFechaInicio">
+
+                            </div>
+
+                            <!-- FECHA FINAL -->
+                            <div class="col-lg-4">
+
+                                <label class="fw-bold">
+
+                                    Fecha final
+
+                                </label>
+
+                                <input
+                                    type="date"
+                                    class="form-control"
+                                    id="dashboardFechaFin">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- CHECKS -->
+                <!-- ========================= -->
+
+                <div class="row mb-4">
+
+                    <div class="col-lg-6">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                Tipo vehículo
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        checked
+                                        id="chkMoto">
+
+                                    <label
+                                        class="form-check-label">
+
+                                        Moto
+
+                                    </label>
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        checked
+                                        id="chkCarro">
+
+                                    <label
+                                        class="form-check-label">
+
+                                        Carro
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-6">
+
+                        <div class="card">
+
+                            <div class="card-header">
+
+                                Responsables
+
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        checked
+                                        type="checkbox"
+                                        id="chkAngela">
+
+                                    Angela
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        checked
+                                        type="checkbox"
+                                        id="chkAngelica">
+
+                                    Angelica
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        checked
+                                        type="checkbox"
+                                        id="chkAngie">
+
+                                    Angie
+
+                                </div>
+
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input"
+                                        checked
+                                        type="checkbox"
+                                        id="chkKarime">
+
+                                    Karime
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- TARJETAS -->
+                <!-- ========================= -->
+
+                <div class="row mb-4">
+
+                    <div class="col-md-3">
+
+                        <div class="alert alert-primary">
+
+                            <h5>Total Lavados</h5>
+
+                            <h2 id="lblTotal">
+
+                                0
+
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <div class="alert alert-success">
+
+                            <h5>Motos</h5>
+
+                            <h2 id="lblMotos">
+
+                                0
+
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <div class="alert alert-warning">
+
+                            <h5>Carros</h5>
+
+                            <h2 id="lblCarros">
+
+                                0
+
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <div class="alert alert-info">
+
+                            <h5>Promedio</h5>
+
+                            <h2 id="lblPromedio">
+
+                                0
+
+                            </h2>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- ========================= -->
+                <!-- GRAFICA -->
+                <!-- ========================= -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        Cantidad de lavados
+
+                    </div>
+
+                    <div class="card-body text-center">
+
+                        <canvas
+                            id="graficaDashboardLavadero"
+                            height="120">
+                        </canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 </html>
