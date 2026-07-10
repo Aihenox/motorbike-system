@@ -1,7 +1,7 @@
 import os
 
 from app.repositories.connection import conectar
-
+from datetime import datetime, timedelta
 
 # ==========================================
 # MOTOR DATABASE
@@ -91,9 +91,126 @@ def construir_where_dashboard(
         )
 
     # ==========================================
-    # FECHAS
+    # FILTRO POR PERIODO
     # ==========================================
+
+    # --------------------------
+    # DIA
+    # --------------------------
     if (
+
+        periodo == "dia"
+
+        and fecha_inicio
+
+    ):
+
+        where.append(
+
+            f"DATE(fecha) = {operador}"
+
+        )
+
+        parametros.append(
+
+            fecha_inicio
+
+        )
+
+    # --------------------------
+    # SEMANA
+    # --------------------------
+    elif (
+
+        periodo == "semana"
+
+        and fecha_inicio
+
+    ):
+
+        fecha_fin = datetime.strptime(
+
+            fecha_inicio,
+
+            "%Y-%m-%d"
+
+        )
+
+        fecha_inicio_semana = (
+
+            fecha_fin - timedelta(days=6)
+
+        ).strftime("%Y-%m-%d")
+
+        where.append(
+
+            f"DATE(fecha) BETWEEN {operador} AND {operador}"
+
+        )
+
+        parametros.extend([
+
+            fecha_inicio_semana,
+
+            fecha_fin.strftime("%Y-%m-%d")
+
+        ])
+
+    # --------------------------
+    # MES
+    # --------------------------
+    elif (
+
+        periodo == "mes"
+
+        and fecha_inicio
+
+    ):
+
+        anio = fecha_inicio[:4]
+
+        mes = fecha_inicio[5:7]
+
+        if POSTGRES:
+
+            where.append(
+
+                "EXTRACT(YEAR FROM fecha) = %s"
+
+            )
+
+            where.append(
+
+                "EXTRACT(MONTH FROM fecha) = %s"
+
+            )
+
+        else:
+
+            where.append(
+
+                "strftime('%Y', fecha) = ?"
+
+            )
+
+            where.append(
+
+                "strftime('%m', fecha) = ?"
+
+            )
+
+        parametros.extend([
+
+            anio,
+
+            mes
+
+        ])
+
+    # --------------------------
+    # RANGO
+    # --------------------------
+    elif (
 
         periodo == "rango"
 
@@ -116,26 +233,6 @@ def construir_where_dashboard(
             fecha_fin
 
         ])
-
-    elif (
-
-        periodo == "rango"
-
-        and fecha_inicio
-
-    ):
-
-        where.append(
-
-            f"DATE(fecha) = {operador}"
-
-        )
-
-        parametros.append(
-
-            fecha_inicio
-
-        )
     return where, parametros
 
 # ==========================================

@@ -218,7 +218,6 @@ function obtenerFiltrosDashboard(){
             document.getElementById(
                 "dashboardFechaFin"
             ).value
-
     };
 
 }
@@ -360,6 +359,73 @@ function activarEventosDashboard(){
 
             () => {
 
+                // ==========================
+                // CAMBIO DE PERIODO
+                // ==========================
+                if(control.id === "periodoDashboard"){
+
+                    cambiarPeriodoDashboard();
+
+                    return;
+
+                }
+
+                // ==========================
+                // FECHA INICIO
+                // ==========================
+                if(control.id === "dashboardFechaInicio"){
+
+                    const periodo = document.getElementById(
+                        "periodoDashboard"
+                    ).value;
+
+                    const fechaFin = document.getElementById(
+                        "dashboardFechaFin"
+                    ).value;
+
+                    if(periodo !== "mes"){
+
+                        document.getElementById(
+                            "periodoDashboard"
+                        ).value = fechaFin
+                            ? "rango"
+                            : "dia";
+
+                    }
+
+                }
+
+                // ==========================
+                // FECHA FIN
+                // ==========================
+                if(control.id === "dashboardFechaFin"){
+
+                    const fechaInicio = document.getElementById(
+                        "dashboardFechaInicio"
+                    ).value;
+
+                    if(!fechaInicio){
+
+                        alert(
+                            "Primero seleccione la fecha inicial."
+                        );
+
+                        control.value = "";
+
+                        return;
+
+                    }
+
+                    if(control.value){
+
+                        document.getElementById(
+                            "periodoDashboard"
+                        ).value = "rango";
+
+                    }
+
+                }
+
                 cargarDashboard();
 
             }
@@ -367,6 +433,83 @@ function activarEventosDashboard(){
         );
 
     });
+}
+
+// ==========================================
+// CAMBIAR PERIODO DASHBOARD
+// ==========================================
+function cambiarPeriodoDashboard(){
+
+    const periodo = document.getElementById(
+        "periodoDashboard"
+    ).value;
+
+    const hoy = new Date();
+
+    const fechaHoy = hoy.toISOString()
+        .split("T")[0];
+
+    // ==========================
+    // LIMPIAR FILTROS
+    // ==========================
+    document.getElementById(
+        "dashboardFechaInicio"
+    ).value = "";
+
+    document.getElementById(
+        "dashboardFechaFin"
+    ).value = "";
+
+    // ==========================
+    // DIA
+    // ==========================
+    if(periodo === "dia"){
+
+        document.getElementById(
+            "dashboardFechaInicio"
+        ).value = fechaHoy;
+
+        cargarDashboard();
+
+    }
+
+    // ==========================
+    // SEMANA
+    // ==========================
+    else if(periodo === "semana"){
+
+        cargarDashboard();
+
+    }
+
+    // ==========================
+    // MES
+    // ==========================
+    else if(periodo === "mes"){
+
+        const fecha = document.getElementById(
+            "dashboardFechaInicio"
+        );
+
+        if(!fecha.value){
+
+            fecha.value = fechaHoy;
+
+        }
+
+        cargarDashboard();
+
+    }
+
+    // ==========================
+    // RANGO
+    // ==========================
+    else{
+
+        // Esperar que el usuario
+        // seleccione las fechas
+
+    }
 
 }
 
@@ -393,7 +536,15 @@ window.addEventListener(
 
                 "shown.bs.modal",
 
-                cargarDashboard
+                () => {
+
+                    document.getElementById(
+                        "periodoDashboard"
+                    ).value = "semana";
+
+                    cambiarPeriodoDashboard();
+
+                }
 
             );
 

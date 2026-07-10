@@ -475,10 +475,6 @@ def detalle_venta_cafeteria(
             )
         )
 
-        print("VENTA ID:", venta_id)
-
-        print("DETALLE:", detalle)
-
         detalle_json = []
 
         for item in detalle:

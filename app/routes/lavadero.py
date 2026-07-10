@@ -733,11 +733,6 @@ def validar_admin():
             "admin"
         )
 
-        print("\n========== ADMIN ==========")
-        print(admin)
-        print(type(admin))
-        print("===========================\n")
-
         if not admin:
 
             return jsonify({
