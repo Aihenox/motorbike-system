@@ -348,15 +348,11 @@ def obtener_grafica_dashboard_db(
             filtros
         )
 
-        grupo = construir_group_dashboard(
-            filtros
-        )
-
-        query = f"""
+        query = """
 
             SELECT
 
-                {grupo["campo"]} AS fecha,
+                DATE(fecha) AS fecha,
 
                 vehiculo,
 
@@ -376,17 +372,17 @@ def obtener_grafica_dashboard_db(
                 where
             )
 
-        query += f"""
+        query += """
 
             GROUP BY
 
-                {grupo["campo"]},
+                DATE(fecha),
 
                 vehiculo
 
             ORDER BY
 
-                {grupo["campo"]}
+                DATE(fecha)
 
         """
         
@@ -430,56 +426,3 @@ def obtener_grafica_dashboard_db(
             
         return resultado
     
-# ==========================================
-# AGRUPAR DASHBOARD
-# ==========================================
-def construir_group_dashboard(
-    filtros
-):
-
-    periodo = filtros.get(
-        "periodo",
-        "dia"
-    )
-
-    # ==========================================
-    # DIA Y RANGO
-    # ==========================================
-    if periodo in (
-        "dia",
-        "rango"
-    ):
-
-        return {
-
-            "campo": "DATE(fecha)"
-
-        }
-
-    # ==========================================
-    # SEMANA
-    # ==========================================
-    elif periodo == "semana":
-
-        return {
-
-            "campo": "strftime('%Y-%W', fecha)"
-
-        }
-
-    # ==========================================
-    # MES
-    # ==========================================
-    elif periodo == "mes":
-
-        return {
-
-            "campo": "strftime('%Y-%m', fecha)"
-
-        }
-
-    return {
-
-        "campo": "DATE(fecha)"
-
-    }
