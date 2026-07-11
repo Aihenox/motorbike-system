@@ -179,13 +179,13 @@ def construir_where_dashboard(
 
             where.append(
 
-                "EXTRACT(YEAR FROM fecha) = %s"
+                "EXTRACT(YEAR FROM CAST(fecha AS TIMESTAMP)) = %s"
 
             )
 
             where.append(
 
-                "EXTRACT(MONTH FROM fecha) = %s"
+                "EXTRACT(MONTH FROM CAST(fecha AS TIMESTAMP)) = %s"
 
             )
 
