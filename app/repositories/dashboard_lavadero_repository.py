@@ -90,6 +90,10 @@ def construir_where_dashboard(
             responsables
         )
 
+    print("Periodo:", periodo)
+    print("Fecha inicio:", fecha_inicio)
+    print("Fecha fin:", fecha_fin)
+
     # ==========================================
     # FILTRO POR PERIODO
     # ==========================================
@@ -301,6 +305,11 @@ def obtener_resumen_dashboard_db(
 
             )
 
+        print("\n========== QUERY ==========")
+        print(query)
+        print("PARAMETROS:", parametros)
+        print("===========================\n")
+
         c.execute(
 
             query,
@@ -386,6 +395,11 @@ def obtener_grafica_dashboard_db(
 
         """
         
+        print("\n========== QUERY ==========")
+        print(query)
+        print("PARAMETROS:", parametros)
+        print("===========================\n")
+
         c.execute(
 
             query,

@@ -449,16 +449,38 @@ function cambiarPeriodoDashboard(){
     const fechaHoy = hoy.toISOString()
         .split("T")[0];
 
-    // ==========================
-    // LIMPIAR FILTROS
-    // ==========================
-    document.getElementById(
-        "dashboardFechaInicio"
-    ).value = "";
+    const fechaInicio = document.getElementById("dashboardFechaInicio");
+    const fechaFin = document.getElementById("dashboardFechaFin");
 
-    document.getElementById(
-        "dashboardFechaFin"
-    ).value = "";
+    // limpiar
+    fechaInicio.value = "";
+    fechaFin.value = "";
+
+    switch(periodo){
+
+        case "dia":
+
+            fechaInicio.value = fechaHoy;
+            cargarDashboard();
+            break;
+
+        case "semana":
+
+            fechaInicio.value = fechaHoy;
+            cargarDashboard();
+            break;
+
+        case "mes":
+
+            fechaInicio.value = fechaHoy;
+            cargarDashboard();
+            break;
+
+        case "rango":
+
+            break;
+
+    }
 
     // ==========================
     // DIA
@@ -477,6 +499,10 @@ function cambiarPeriodoDashboard(){
     // SEMANA
     // ==========================
     else if(periodo === "semana"){
+
+        document.getElementById(
+            "dashboardFechaInicio"
+        ).value = fechaHoy;
 
         cargarDashboard();
 
