@@ -3,6 +3,7 @@ import os
 from app.repositories.connection import conectar
 from datetime import datetime, timedelta
 
+
 # ==========================================
 # MOTOR DATABASE
 # ==========================================
@@ -89,10 +90,6 @@ def construir_where_dashboard(
         parametros.extend(
             responsables
         )
-
-    print("Periodo:", periodo)
-    print("Fecha inicio:", fecha_inicio)
-    print("Fecha fin:", fecha_fin)
 
     # ==========================================
     # FILTRO POR PERIODO
@@ -305,11 +302,6 @@ def obtener_resumen_dashboard_db(
 
             )
 
-        print("\n========== QUERY ==========")
-        print(query)
-        print("PARAMETROS:", parametros)
-        print("===========================\n")
-
         c.execute(
 
             query,
@@ -365,6 +357,8 @@ def obtener_grafica_dashboard_db(
 
                 vehiculo,
 
+                responsable,
+
                 COUNT(*) AS cantidad
 
             FROM lavados
@@ -387,7 +381,9 @@ def obtener_grafica_dashboard_db(
 
                 DATE(fecha),
 
-                vehiculo
+                vehiculo,
+
+                responsable
 
             ORDER BY
 
@@ -395,11 +391,6 @@ def obtener_grafica_dashboard_db(
 
         """
         
-        print("\n========== QUERY ==========")
-        print(query)
-        print("PARAMETROS:", parametros)
-        print("===========================\n")
-
         c.execute(
 
             query,
@@ -422,6 +413,8 @@ def obtener_grafica_dashboard_db(
 
                     "vehiculo": row["vehiculo"],
 
+                    "responsable": row["responsable"],
+
                     "cantidad": row["cantidad"]
 
                 })
@@ -434,9 +427,12 @@ def obtener_grafica_dashboard_db(
 
                     "vehiculo": row[1],
 
-                    "cantidad": row[2]
+                    "responsable": row[2],
+
+                    "cantidad": row[3]
 
                 })
             
         return resultado
+    
     

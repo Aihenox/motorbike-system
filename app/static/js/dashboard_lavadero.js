@@ -58,9 +58,9 @@ async function cargarDashboard(){
             "lblPromedio"
 
         ).textContent = data.promedio;
-
-        console.table(data.grafica);
-
+        console.table(
+            data.grafica
+        );
         const grafica = prepararDatosGrafica(
 
             data.grafica
@@ -73,7 +73,9 @@ async function cargarDashboard(){
 
             grafica.motos,
 
-            grafica.carros
+            grafica.carros,
+
+            grafica.detalle
 
         );
 
@@ -102,15 +104,27 @@ function prepararDatosGrafica(datos){
 
                 Moto:0,
 
-                Carro:0
+                Carro:0,
 
+                detalle:{
+
+                    Moto:{},
+
+                    Carro:{}
+
+                }
             };
 
         }
 
-        mapa[item.fecha][item.vehiculo]=
+        mapa[item.fecha][item.vehiculo] +=
 
             item.cantidad;
+
+        mapa[item.fecha]
+            .detalle[item.vehiculo][item.responsable] =
+
+                item.cantidad;
 
     });
 
@@ -138,13 +152,27 @@ function prepararDatosGrafica(datos){
 
     });
 
+    const detalle=[];
+
+    Object.keys(mapa).forEach(fecha=>{
+
+        detalle.push(
+
+            mapa[fecha].detalle
+
+        );
+
+    });
+
     return{
 
         labels,
 
         motos,
 
-        carros
+        carros,
+
+        detalle
 
     };
 
@@ -225,7 +253,7 @@ function obtenerFiltrosDashboard(){
 // ==========================================
 // DIBUJAR LA GRAFICA
 // ==========================================
-function dibujarGrafica(labels, motos, carros){
+function dibujarGrafica(labels, motos, carros, detalle){
 
     const canvas = document.getElementById(
         "graficaDashboardLavadero"
@@ -273,8 +301,8 @@ function dibujarGrafica(labels, motos, carros){
 
                     }
 
-                ]
-
+                ],
+                detalle: detalle
             },
 
             options: {
@@ -292,6 +320,72 @@ function dibujarGrafica(labels, motos, carros){
                 },
 
                 plugins:{
+
+                    tooltip:{
+
+                        callbacks:{
+
+                            label:function(context){
+
+                                const detalle = context.chart.data.detalle;
+
+                                const indice = context.dataIndex;
+
+                                const vehiculo = context.dataset.label;
+
+                                const responsables = detalle[indice][vehiculo];
+
+                                const lineas = [];
+
+                                lineas.push(
+
+                                    vehiculo +
+
+                                    ": " +
+
+                                    context.raw
+
+                                );
+
+                                Object.entries(
+
+                                    responsables
+
+                                )
+
+                                .sort(
+
+                                    (a, b) => b[1] - a[1]
+
+                                )
+
+                                .forEach(
+
+                                    ([nombre, cantidad]) => {
+
+                                        lineas.push(
+
+                                            "   • " +
+
+                                            nombre +
+
+                                            ": " +
+
+                                            cantidad
+
+                                        );
+
+                                    }
+
+                                );
+
+                                return lineas;
+
+                            }
+
+                        }
+
+                    },
 
                     legend:{
 
@@ -479,61 +573,6 @@ function cambiarPeriodoDashboard(){
         case "rango":
 
             break;
-
-    }
-
-    // ==========================
-    // DIA
-    // ==========================
-    if(periodo === "dia"){
-
-        document.getElementById(
-            "dashboardFechaInicio"
-        ).value = fechaHoy;
-
-        cargarDashboard();
-
-    }
-
-    // ==========================
-    // SEMANA
-    // ==========================
-    else if(periodo === "semana"){
-
-        document.getElementById(
-            "dashboardFechaInicio"
-        ).value = fechaHoy;
-
-        cargarDashboard();
-
-    }
-
-    // ==========================
-    // MES
-    // ==========================
-    else if(periodo === "mes"){
-
-        const fecha = document.getElementById(
-            "dashboardFechaInicio"
-        );
-
-        if(!fecha.value){
-
-            fecha.value = fechaHoy;
-
-        }
-
-        cargarDashboard();
-
-    }
-
-    // ==========================
-    // RANGO
-    // ==========================
-    else{
-
-        // Esperar que el usuario
-        // seleccione las fechas
 
     }
 
