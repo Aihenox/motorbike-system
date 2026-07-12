@@ -2,6 +2,9 @@ import os
 
 from app.repositories.connection import conectar
 
+from app.repositories.database_utils import (
+    obtener_campo
+)
 
 # ==========================================
 # MOTOR DATABASE
@@ -9,6 +12,102 @@ from app.repositories.connection import conectar
 POSTGRES = os.getenv(
     "DATABASE_URL"
 )
+
+# ==========================================
+# CONSTRUIR FILTROS HISTORIAL
+# ==========================================
+def construir_filtros_historial(
+
+    placa,
+
+    fecha_inicio,
+
+    fecha_fin,
+
+    responsable
+
+):
+
+    operador = "%s" if POSTGRES else "?"
+
+    filtros = ""
+
+    parametros = []
+
+    # ==========================================
+    # PLACA
+    # ==========================================
+    if placa:
+
+        filtros += f"""
+
+            AND placa LIKE {operador}
+
+        """
+
+        parametros.append(
+
+            f"%{placa}%"
+
+        )
+
+    # ==========================================
+    # RESPONSABLE
+    # ==========================================
+    if responsable:
+
+        filtros += f"""
+
+            AND responsable LIKE {operador}
+
+        """
+
+        parametros.append(
+
+            f"%{responsable}%"
+
+        )
+
+    # ==========================================
+    # FECHAS
+    # ==========================================
+    if fecha_inicio and fecha_fin:
+
+        filtros += f"""
+
+            AND DATE(fecha)
+
+            BETWEEN {operador}
+
+            AND {operador}
+
+        """
+
+        parametros.extend([
+
+            fecha_inicio,
+
+            fecha_fin
+
+        ])
+
+    elif fecha_inicio:
+
+        filtros += f"""
+
+            AND DATE(fecha)
+
+            = {operador}
+
+        """
+
+        parametros.append(
+
+            fecha_inicio
+
+        )
+
+    return filtros, parametros
 
 
 # ==========================================
@@ -48,71 +147,19 @@ def obtener_historial_lavadero_db(
 
         """
 
-        parametros = []
+        filtros, parametros = construir_filtros_historial(
 
-        # ==========================================
-        # PLACA
-        # ==========================================
-        if placa:
+            placa,
 
-            query += f"""
+            fecha_inicio,
 
-                AND placa LIKE {operador}
+            fecha_fin,
 
-            """
+            responsable
 
-            parametros.append(
-                f"%{placa}%"
-            )
+        )
 
-        # ==========================================
-        # RESPONSABLE
-        # ==========================================
-        if responsable:
-
-            query += f"""
-
-                AND responsable LIKE {operador}
-
-            """
-
-            parametros.append(
-                f"%{responsable}%"
-            )
-
-        # ==========================================
-        # FECHA
-        # ==========================================
-        if fecha_inicio and fecha_fin:
-
-            query += f"""
-
-                AND DATE(fecha)
-                BETWEEN {operador}
-                AND {operador}
-
-            """
-
-            parametros.extend([
-
-                fecha_inicio,
-
-                fecha_fin
-            ])
-
-        elif fecha_inicio:
-
-            query += f"""
-
-                AND DATE(fecha)
-                = {operador}
-
-            """
-
-            parametros.append(
-
-                fecha_inicio
-            )
+        query += filtros
 
         query += """
 
@@ -140,21 +187,23 @@ def obtener_total_lavadero_db(
     fecha_fin="",
 
     responsable=""
+
 ):
 
     with conectar() as conn:
 
         c = conn.cursor()
 
-        operador = "%s" if POSTGRES else "?"
-
         query = """
 
             SELECT
 
                 COALESCE(
+
                     SUM(valor),
+
                     0
+
                 ) AS total
 
             FROM lavados
@@ -163,76 +212,39 @@ def obtener_total_lavadero_db(
 
         """
 
-        parametros = []
+        # ==========================================
+        # FILTROS
+        # ==========================================
+        filtros, parametros = construir_filtros_historial(
+
+            placa,
+
+            fecha_inicio,
+
+            fecha_fin,
+
+            responsable
+
+        )
+
+        query += filtros
 
         # ==========================================
-        # PLACA
+        # SIN FILTROS
         # ==========================================
-        if placa:
+        if (
 
-            query += f"""
+            not fecha_inicio
 
-                AND placa LIKE {operador}
+            and not fecha_fin
 
-            """
+            and not placa
 
-            parametros.append(
-                f"%{placa}%"
-            )
+            and not responsable
 
-        # ==========================================
-        # RESPONSABLE
-        # ==========================================
-        if responsable:
+        ):
 
-            query += f"""
-
-                AND responsable LIKE {operador}
-
-            """
-
-            parametros.append(
-                f"%{responsable}%"
-            )
-
-        # ==========================================
-        # FECHA
-        # ==========================================
-        if fecha_inicio and fecha_fin:
-
-            query += f"""
-
-                AND DATE(fecha)
-                BETWEEN {operador}
-                AND {operador}
-
-            """
-
-            parametros.extend([
-
-                fecha_inicio,
-
-                fecha_fin
-            ])
-
-        elif fecha_inicio:
-
-            query += f"""
-
-                AND DATE(fecha)
-                = {operador}
-
-            """
-
-            parametros.append(
-
-                fecha_inicio
-            )
-
-        # ==========================================
-        # SIN FILTRO FECHA
-        # ==========================================
-        elif not placa and not responsable:
+            operador = "%s" if POSTGRES else "?"
 
             query += f"""
 
@@ -246,23 +258,25 @@ def obtener_total_lavadero_db(
             parametros.append(
 
                 date.today().isoformat()
+
             )
 
         c.execute(
+
             query,
+
             tuple(parametros)
+
         )
 
         row = c.fetchone()
 
-        # ==========================================
-        # POSTGRESQL
-        # ==========================================
-        if POSTGRES:
+        return obtener_campo(
 
-            return row["total"] or 0
+            row,
 
-        # ==========================================
-        # SQLITE
-        # ==========================================
-        return row[0] or 0
+            0,
+
+            "total"
+
+        ) or 0

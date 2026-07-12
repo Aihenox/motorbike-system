@@ -5,6 +5,9 @@ from zoneinfo import ZoneInfo
 
 from app.repositories.connection import conectar
 
+from app.repositories.database_utils import (
+    obtener_campo
+)
 
 # ==========================================
 # MOTOR DATABASE
@@ -12,19 +15,6 @@ from app.repositories.connection import conectar
 POSTGRES = os.getenv(
     "DATABASE_URL"
 )
-
-
-# ==========================================
-# HELPER VALOR
-# ==========================================
-def obtener_valor(row):
-
-    if POSTGRES:
-
-        return list(row.values())[0]
-
-    return row[0]
-
 
 # ==========================================
 # REGISTRAR LAVADO
@@ -329,21 +319,23 @@ def obtener_metricas_lavadero_db():
 
         row = c.fetchone()
 
-        if POSTGRES:
+        motos = obtener_campo(
+            row,
+            0,
+            "motos"
+        )
 
-            motos = row["motos"]
+        carros = obtener_campo(
+            row,
+            1,
+            "carros"
+        )
 
-            carros = row["carros"]
-
-            total = row["total"]
-
-        else:
-
-            motos = row[0]
-
-            carros = row[1]
-
-            total = row[2]
+        total = obtener_campo(
+            row,
+            2,
+            "total"
+        )
 
         return {
 
@@ -442,33 +434,27 @@ def obtener_estadisticas_responsables_db():
 
         for row in rows:
 
-            if POSTGRES:
+            resultado.append({
 
-                resultado.append({
+                "responsable": obtener_campo(
+                    row,
+                    0,
+                    "responsable"
+                ),
 
-                    "responsable":
-                        row["responsable"],
+                "cantidad": obtener_campo(
+                    row,
+                    1,
+                    "cantidad"
+                ),
 
-                    "cantidad":
-                        row["cantidad"],
+                "total": obtener_campo(
+                    row,
+                    2,
+                    "total"
+                )
 
-                    "total":
-                        row["total"]
-                })
-
-            else:
-
-                resultado.append({
-
-                    "responsable":
-                        row[0],
-
-                    "cantidad":
-                        row[1],
-
-                    "total":
-                        row[2]
-                })
+            })
 
         return resultado
     
@@ -645,13 +631,12 @@ def contar_lavados_placa_db(
 
             return 0
 
-        if isinstance(
+        if resultado is None:
+
+            return 0
+
+        return obtener_campo(
             resultado,
-            dict
-        ):
-
-            return list(
-                resultado.values()
-            )[0]
-
-        return resultado[0]
+            0,
+            "count"
+        )

@@ -283,3 +283,83 @@ def contar_lavados_placa(
     return contar_lavados_placa_db(
         placa
     )
+
+# ==========================================
+# FORMATEAR FECHAS LAVADOS
+# ==========================================
+from datetime import datetime
+
+
+def formatear_fechas_lavados(
+    lavados
+):
+
+    for lavado in lavados:
+
+        try:
+
+            fecha = lavado["fecha"]
+
+            if isinstance(
+                fecha,
+                str
+            ):
+
+                fecha = datetime.fromisoformat(
+                    fecha
+                )
+
+            lavado["fecha"] = fecha.strftime(
+
+                "%d/%m/%Y %H:%M"
+
+            )
+
+        except Exception:
+
+            pass
+
+    return lavados
+
+# ==========================================
+# DASHBOARD PRINCIPAL
+# ==========================================
+def obtener_dashboard_principal():
+
+    metricas = obtener_metricas_lavadero()
+
+    lavados = formatear_fechas_lavados(
+
+        listar_lavados()
+
+    )
+
+    return {
+
+        "lavados_motos": metricas.get(
+
+            "lavados_motos",
+
+            0
+
+        ),
+
+        "lavados_carros": metricas.get(
+
+            "lavados_carros",
+
+            0
+
+        ),
+
+        "total_servicios": metricas.get(
+
+            "dinero_generado",
+
+            0
+
+        ),
+
+        "lavados": lavados
+
+    }

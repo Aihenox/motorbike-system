@@ -58,9 +58,7 @@ async function cargarDashboard(){
             "lblPromedio"
 
         ).textContent = data.promedio;
-        console.table(
-            data.grafica
-        );
+
         const grafica = prepararDatosGrafica(
 
             data.grafica

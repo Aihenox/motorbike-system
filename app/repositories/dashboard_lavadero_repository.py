@@ -3,6 +3,9 @@ import os
 from app.repositories.connection import conectar
 from datetime import datetime, timedelta
 
+from app.repositories.database_utils import (
+    obtener_campo
+)
 
 # ==========================================
 # MOTOR DATABASE
@@ -312,25 +315,25 @@ def obtener_resumen_dashboard_db(
 
         row = c.fetchone()
 
-        if POSTGRES:
-
-            return {
-
-                "total": row["total"] or 0,
-
-                "motos": row["motos"] or 0,
-
-                "carros": row["carros"] or 0
-
-            }
-
         return {
 
-            "total": row[0] or 0,
+            "total": obtener_campo(
+                row,
+                0,
+                "total"
+            ) or 0,
 
-            "motos": row[1] or 0,
+            "motos": obtener_campo(
+                row,
+                1,
+                "motos"
+            ) or 0,
 
-            "carros": row[2] or 0
+            "carros": obtener_campo(
+                row,
+                2,
+                "carros"
+            ) or 0
 
         }
     
@@ -405,34 +408,102 @@ def obtener_grafica_dashboard_db(
 
         for row in rows:
 
-            if POSTGRES:
+            resultado.append({
 
-                resultado.append({
+                "fecha": str(
 
-                    "fecha": str(row["fecha"]),
+                    obtener_campo(
+                        row,
+                        0,
+                        "fecha"
+                    )
 
-                    "vehiculo": row["vehiculo"],
+                ),
 
-                    "responsable": row["responsable"],
+                "vehiculo": obtener_campo(
+                    row,
+                    1,
+                    "vehiculo"
+                ),
 
-                    "cantidad": row["cantidad"]
+                "responsable": obtener_campo(
+                    row,
+                    2,
+                    "responsable"
+                ),
 
-                })
+                "cantidad": obtener_campo(
+                    row,
+                    3,
+                    "cantidad"
+                )
 
-            else:
-
-                resultado.append({
-
-                    "fecha": row[0],
-
-                    "vehiculo": row[1],
-
-                    "responsable": row[2],
-
-                    "cantidad": row[3]
-
-                })
+            })
             
         return resultado
     
-    
+# ==========================================
+# PROXIMOS LAVADOS DE CORTESIA
+# ==========================================
+def obtener_proximas_cortesias_db():
+
+    with conectar() as conn:
+
+        c = conn.cursor()
+
+        query = """
+
+            SELECT
+
+                placa,
+
+                COUNT(*) AS lavados
+
+            FROM lavados
+
+            GROUP BY placa
+
+            ORDER BY lavados DESC,
+                     placa
+
+        """
+
+        c.execute(query)
+
+        rows = c.fetchall()
+
+        resultado = []
+
+        for row in rows:
+
+            lavados = obtener_campo(
+
+                row,
+
+                1,
+
+                "lavados"
+
+            )
+
+            avance = lavados % 5
+
+            if avance == 4:
+
+                resultado.append({
+
+                    "placa": obtener_campo(
+
+                        row,
+
+                        0,
+
+                        "placa"
+
+                    ),
+
+                    "lavados": lavados
+
+                })
+
+        return resultado

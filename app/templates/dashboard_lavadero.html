@@ -370,6 +370,49 @@
 
         </div>
 
+        <!-- ========================================== -->
+        <!-- PROXIMOS LAVADOS DE CORTESIA -->
+        <!-- ========================================== -->
+        <div class="row mt-3">
+
+            <div class="col-12">
+
+                <div class="card shadow-sm">
+
+                    <div class="card-header">
+
+                        <i class="bi bi-gift-fill text-success"></i>
+
+                        Próximos lavados de cortesía
+
+                        <span
+                            id="lblTotalCortesias"
+                            class="badge bg-success float-end">
+                            0
+                        </span>
+
+                    </div>
+
+                    <div
+                        class="card-body"
+                        id="listaCortesias">
+
+                        <div
+                            class="text-center text-muted">
+
+                            No hay vehículos próximos
+                            a una cortesía.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
     <!-- TABLA -->
@@ -481,61 +524,13 @@
 
 </div>
 
-<script>
+<script src="{{ url_for(
 
-// ==========================================
-// RELOJ
-// ==========================================
-function actualizarFechaHora(){
+    'static',
 
-    const ahora = new Date();
+    filename='js/dashboard_principal_lavadero.js'
 
-    const dia = String(
-        ahora.getDate()
-    ).padStart(2, "0");
-
-    const mes = String(
-        ahora.getMonth() + 1
-    ).padStart(2, "0");
-
-    const anio = ahora.getFullYear();
-
-    const horas = String(
-        ahora.getHours()
-    ).padStart(2, "0");
-
-    const minutos = String(
-        ahora.getMinutes()
-    ).padStart(2, "0");
-
-    const segundos = String(
-        ahora.getSeconds()
-    ).padStart(2, "0");
-
-    document.getElementById(
-        "fechaHora"
-    ).innerHTML =
-
-        `${dia}/${mes}/${anio} ${horas}:${minutos}:${segundos}`;
-}
-
-actualizarFechaHora();
-
-setInterval(
-    actualizarFechaHora,
-    1000
-);
-
-// ==========================================
-// AUTO REFRESH
-// ==========================================
-setInterval(() => {
-
-    window.location.reload();
-
-}, 30000);
-
-</script>
+) }}"></script>
 
 </body>
 

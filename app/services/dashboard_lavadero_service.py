@@ -2,7 +2,9 @@ from app.repositories.dashboard_lavadero_repository import (
 
     obtener_resumen_dashboard_db,
 
-    obtener_grafica_dashboard_db
+    obtener_grafica_dashboard_db,
+
+    obtener_proximas_cortesias_db
 
 )
 
@@ -47,7 +49,7 @@ def obtener_dashboard(
 
         ),
 
-        "grafica": grafica
+        "grafica": grafica,
 
     }
 
@@ -141,3 +143,42 @@ def calcular_promedio(
         2
 
     )
+
+# ==========================================
+# PROXIMAS CORTESIAS
+# ==========================================
+def obtener_proximas_cortesias():
+
+    cortesias = obtener_proximas_cortesias_db()
+
+    resultado = []
+
+    for item in cortesias:
+
+        lavados_totales = item["lavados"]
+
+        avance = lavados_totales % 5
+
+        if avance == 0:
+
+            avance = 5
+
+        resultado.append({
+
+            "placa": item["placa"],
+
+            "lavados_totales": lavados_totales,
+
+            "avance": avance,
+
+            "faltan": 5 - avance,
+
+            "progreso": round(
+
+                (avance / 5) * 100
+
+            )
+
+        })
+
+    return resultado

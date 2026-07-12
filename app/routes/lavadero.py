@@ -51,11 +51,16 @@ from app.services.lavadero_service import (
 
     eliminar_lavado,
 
-    contar_lavados_placa_db
+    contar_lavados_placa_db,
+
+    formatear_fechas_lavados,
+
+    obtener_dashboard_principal
 )
 
 from app.services.dashboard_lavadero_service import (
-    obtener_dashboard
+    obtener_dashboard,
+    obtener_proximas_cortesias
 )
 
 from app.services.historial_lavadero_service import (
@@ -96,58 +101,13 @@ lavadero_bp = Blueprint(
 @login_required
 def dashboard_lavadero():
 
-    metricas = obtener_metricas_lavadero()
-
-    lavados = listar_lavados()
-
-    # ==========================================
-    # FORMATEAR FECHAS
-    # ==========================================
-    for lavado in lavados:
-
-        try:
-
-            fecha = lavado["fecha"]
-
-            if isinstance(
-                fecha,
-                str
-            ):
-
-                fecha = datetime.fromisoformat(
-                    fecha
-                )
-
-            lavado["fecha"] = fecha.strftime(
-                "%d/%m/%Y %H:%M"
-            )
-
-        except:
-
-            pass
-
     return render_template(
 
         "dashboard_lavadero.html",
 
-        lavados_motos=metricas.get(
-            "lavados_motos",
-            0
-        ),
+        **obtener_dashboard_principal()
 
-        lavados_carros=metricas.get(
-            "lavados_carros",
-            0
-        ),
-
-        total_servicios=metricas.get(
-            "dinero_generado",
-            0
-        ),
-
-        lavados=lavados
     )
-
 
 # ==========================================
 # FORMULARIO LAVADERO
@@ -818,5 +778,25 @@ def dashboard_lavadero_ajax():
         "success": True,
 
         **dashboard
+
+    })
+
+# ==========================================
+# PROXIMAS CORTESIAS AJAX
+# ==========================================
+@lavadero_bp.route(
+
+    "/lavadero/cortesias"
+
+)
+
+@login_required
+def proximas_cortesias_ajax():
+
+    return jsonify({
+
+        "success": True,
+
+        "cortesias": obtener_proximas_cortesias()
 
     })
