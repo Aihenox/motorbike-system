@@ -461,6 +461,8 @@ def obtener_proximas_cortesias_db():
 
             FROM lavados
 
+            WHERE vehiculo = 'Moto'
+
             GROUP BY placa
 
             ORDER BY lavados DESC,
