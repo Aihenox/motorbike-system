@@ -101,9 +101,29 @@ def confirmar_salida_ajax():
             )
         )
 
+        tarifa_especial = (
+
+            request.form.get(
+
+                "tarifa_especial"
+
+            ) == "true"
+
+        )
+
+        valor_especial = request.form.get(
+
+            "valor_especial"
+
+        )
+
         resultado = confirmar_salida(
 
-            ticket
+            ticket,
+
+            tarifa_especial,
+
+            valor_especial
 
         )
 
@@ -121,7 +141,7 @@ def confirmar_salida_ajax():
 
         }), 400
 
-    except Exception as e:
+    except Exception:
 
         current_app.logger.exception(
             "Error confirmando salida"

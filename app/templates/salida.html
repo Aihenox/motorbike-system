@@ -479,7 +479,9 @@ form.addEventListener(
 
             `;
         }
-
+        const valorCalculado = Number(
+            data.valor
+        );
         document.getElementById(
             "detalleSalida"
         ).innerHTML = `
@@ -516,22 +518,47 @@ form.addEventListener(
 
             </div>
 
-            <div class="alert alert-success">
+            <div class="alert alert-success mb-2">
 
                 <strong>
 
                     Valor calculado:
 
-                    $ ${Number(data.valor).toLocaleString()}
-
                 </strong>
+
+                <br>
+
+                <span class="fs-5">
+
+                    $ ${valorCalculado.toLocaleString()}
+
+                </span>
 
             </div>
 
             ${mensajeMensualidad}
 
         `;
+        // ==========================================
+        // REINICIAR TARIFA ESPECIAL
+        // ==========================================
+        const chk = document.getElementById(
+            "chkTarifaEspecial"
+        );
 
+        const contenedor = document.getElementById(
+            "contenedorTarifaEspecial"
+        );
+
+        const txt = document.getElementById(
+            "txtTarifaEspecial"
+        );
+
+        chk.checked = false;
+
+        contenedor.style.display = "none";
+
+        txt.value = valorCalculado;
         new bootstrap.Modal(
 
             document.getElementById(
@@ -556,7 +583,46 @@ window.addEventListener(
             return;
 
         }
+        // ==========================================
+        // EVENTO TARIFA ESPECIAL
+        // ==========================================
+        const chkTarifaEspecial =
+            document.getElementById(
+                "chkTarifaEspecial"
+            );
 
+        const contenedorTarifaEspecial =
+            document.getElementById(
+                "contenedorTarifaEspecial"
+            );
+
+        chkTarifaEspecial.addEventListener(
+
+            "change",
+
+            function(){
+
+                contenedorTarifaEspecial.style.display =
+
+                    this.checked
+
+                    ? "block"
+
+                    : "none";
+
+                if(this.checked){
+
+                    document.getElementById(
+
+                        "txtTarifaEspecial"
+
+                    ).focus();
+
+                }
+
+            }
+
+        );
         btnConfirmar.addEventListener(
             "click",
             async function(){
@@ -564,9 +630,68 @@ window.addEventListener(
                 const formData =
                     new FormData();
 
+                // ==========================================
+                // TARIFA ESPECIAL
+                // ==========================================
+                const chkTarifaEspecial =
+                    document.getElementById(
+                        "chkTarifaEspecial"
+                    );
+
+                const txtTarifaEspecial =
+                    document.getElementById(
+                        "txtTarifaEspecial"
+                    );
+
+                if(
+
+                    chkTarifaEspecial.checked
+
+                    &&
+
+                    (
+
+                        txtTarifaEspecial.value.trim() === ""
+
+                        ||
+
+                        Number(txtTarifaEspecial.value) <= 0
+
+                    )
+
+                ){
+
+                    alert(
+
+                        "Ingrese un valor válido para la tarifa especial."
+
+                    );
+
+                    txtTarifaEspecial.focus();
+
+                    return;
+
+                }
+
                 formData.append(
                     "ticket",
                     salidaPendiente.ticket
+                );
+
+                formData.append(
+
+                    "tarifa_especial",
+
+                    chkTarifaEspecial.checked
+
+                );
+
+                formData.append(
+
+                    "valor_especial",
+
+                    txtTarifaEspecial.value
+
                 );
 
                 const response =
@@ -592,7 +717,12 @@ window.addEventListener(
 
                     return;
                 }
+                // ==========================================
+                // ACTUALIZAR VALOR DEL TICKET
+                // ==========================================
+                salidaPendiente.valor = data.valor;
 
+                salidaPendiente.hora_salida = data.hora_salida;
                 
                 // SONIDO
                 const audio = new Audio(
@@ -662,6 +792,69 @@ window.addEventListener(
             <div class="modal-body">
 
                 <div id="detalleSalida"></div>
+
+                <hr>
+
+                <!-- ========================================== -->
+                <!-- TARIFA ESPECIAL -->
+                <!-- ========================================== -->
+                <div class="form-check">
+
+                    <input
+
+                        class="form-check-input"
+
+                        type="checkbox"
+
+                        id="chkTarifaEspecial"
+
+                    >
+
+                    <label
+
+                        class="form-check-label"
+
+                        for="chkTarifaEspecial"
+
+                    >
+
+                        Aplicar tarifa especial
+
+                    </label>
+
+                </div>
+
+                <div
+
+                    id="contenedorTarifaEspecial"
+
+                    class="mt-3"
+
+                    style="display:none;"
+
+                >
+
+                    <label class="form-label">
+
+                        Valor a cobrar
+
+                    </label>
+
+                    <input
+
+                        type="number"
+
+                        class="form-control"
+
+                        id="txtTarifaEspecial"
+
+                        min="0"
+
+                        placeholder="Ingrese el valor"
+
+                    >
+
+                </div>
 
             </div>
 

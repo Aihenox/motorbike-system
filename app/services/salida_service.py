@@ -20,7 +20,15 @@ from app.utils.date_utils import (
 # ==========================================
 # PROCESAR SALIDA
 # ==========================================
-def procesar_salida(ticket):
+def procesar_salida(
+
+    ticket,
+
+    tarifa_especial=False,
+
+    valor_especial=None
+
+):
 
     data = obtener_ticket_activo_db(
         ticket
@@ -154,6 +162,25 @@ def procesar_salida(ticket):
             valor = 0
             
     # ==========================================
+    # TARIFA ESPECIAL
+    # ==========================================
+    if tarifa_especial:
+
+        try:
+
+            valor = int(valor_especial)
+
+        except (TypeError, ValueError):
+
+            return {
+
+                "success": False,
+
+                "message": "El valor de la tarifa especial no es válido."
+
+            }
+
+    # ==========================================
     # ASEGURAR TZ EN SALIDA
     # ==========================================
     hora_salida = asegurar_zona_colombia(
@@ -224,12 +251,22 @@ def procesar_salida(ticket):
 # ==========================================
 def confirmar_salida(
 
-    ticket
+    ticket,
+
+    tarifa_especial=False,
+
+    valor_especial=None
 
 ):
 
     salida = procesar_salida(
-        ticket
+
+        ticket,
+
+        tarifa_especial,
+
+        valor_especial
+
     )
 
     if not salida["success"]:
