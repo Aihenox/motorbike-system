@@ -79,7 +79,7 @@ def crear_mensualidad_db(
 
                 )
 
-                VALUES (
+                VALUES(
 
                     %s,
                     %s,
@@ -90,6 +90,8 @@ def crear_mensualidad_db(
                     %s
 
                 )
+
+                RETURNING id
 
             """, (
 
@@ -102,6 +104,12 @@ def crear_mensualidad_db(
                 estado
 
             ))
+
+            id_mensualidad = c.fetchone()["id"]
+
+            conn.commit()
+
+            return id_mensualidad
 
         else:
 
@@ -133,7 +141,9 @@ def crear_mensualidad_db(
 
             ))
 
-        conn.commit()
+            conn.commit()
+
+            return c.lastrowid
 
 # ==========================================
 # OBTENER MENSUALIDAD

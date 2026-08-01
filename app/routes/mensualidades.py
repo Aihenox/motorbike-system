@@ -44,11 +44,32 @@ def mensualidades():
 
     registros = listar_mensualidades()
 
+    imprimir = request.args.get(
+
+        "imprimir",
+
+        type=int
+
+    )
+
+    mensualidad_ticket = None
+
+    if imprimir:
+
+        mensualidad_ticket = obtener_mensualidad(
+
+            imprimir
+
+        )
+
     return render_template(
 
         "mensualidades.html",
 
-        registros=registros
+        registros=registros,
+
+        mensualidad_ticket=mensualidad_ticket
+
     )
 
 # ==========================================
@@ -66,7 +87,7 @@ def nueva_mensualidad():
 
         try:
 
-            crear_mensualidad(
+            id_mensualidad = crear_mensualidad(
 
                 request.form["placa"],
 
@@ -95,13 +116,20 @@ def nueva_mensualidad():
             )
 
         flash(
-            "Mensualidad registrada correctamente"
+            "Mensualidad registrada correctamente",
+            "success"
         )
 
         return redirect(
+
             url_for(
-                "mensualidades.mensualidades"
+
+                "mensualidades.mensualidades",
+
+                imprimir=id_mensualidad
+
             )
+
         )
 
     return render_template(
@@ -223,3 +251,47 @@ def consultar_mensualidad(
 
     })
 
+# ==========================================
+# PRUEBA TICKET MENSUALIDAD
+# ==========================================
+@mensualidades_bp.route(
+    "/mensualidades/test-ticket"
+)
+@login_required
+def test_ticket_mensualidad():
+
+    return render_template(
+        "ticket_mensualidad_test.html"
+    )
+
+# ==========================================
+# TICKET MENSUALIDAD
+# ==========================================
+@mensualidades_bp.route(
+    "/mensualidades/ticket/<int:id>"
+)
+@login_required
+def ticket_mensualidad(id):
+
+    mensualidad = obtener_mensualidad(id)
+
+    if not mensualidad:
+
+        flash(
+            "La mensualidad no existe.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "mensualidades.mensualidades"
+            )
+        )
+
+    return render_template(
+
+        "ticket_mensualidad.html",
+
+        mensualidad=mensualidad
+
+    )

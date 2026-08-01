@@ -1,4 +1,238 @@
 // ==========================================
+// HEADER EMPRESA
+// ==========================================
+function generarHeaderTicket(){
+
+    return `
+
+        <div class="center">
+
+            <img
+                src="/static/img/logo.png"
+                class="logo"
+            >
+
+            <div class="empresa">
+
+                ESPUMOSO MOTORBIKE
+
+            </div>
+
+            <div class="subtitulo">
+
+                PARQUEADERO Y LAVADERO
+
+            </div>
+
+            <div class="direccion">
+
+                Cra 11 Calle 22 Esquina
+
+            </div>
+
+            <div class="telefonos">
+
+                Tel: 3207081059
+
+                <br>
+
+                WhatsApp: 3217343167
+
+            </div>
+
+        </div>
+
+    `;
+}
+
+
+// ==========================================
+// ESTILOS BASE
+// ==========================================
+function generarEstilosTicket(){
+
+    return `
+
+        <style>
+
+            *{
+
+                margin:0;
+
+                padding:0;
+
+                box-sizing:border-box;
+            }
+
+            @page{
+
+                size:58mm auto;
+
+                margin:0;
+            }
+
+            html,
+            body{
+
+                width:58mm;
+
+                margin:0;
+
+                padding:2mm;
+
+                font-family:'Courier New', monospace;
+
+                overflow:hidden;
+            }
+
+            .center{
+
+                text-align:center;
+            }
+
+            .logo{
+
+                width:60px;
+
+                margin-bottom:6px;
+            }
+
+            .empresa{
+
+                font-size:14px;
+
+                font-weight:bold;
+            }
+
+            .subtitulo{
+
+                font-size:11px;
+
+                font-weight:bold;
+
+                margin-bottom:8px;
+            }
+
+            .direccion{
+
+                font-size:11px;
+
+                font-weight:bold;
+            }
+
+            .telefonos{
+
+                font-size:9px;
+
+                font-weight:bold;
+
+                margin-bottom:10px;
+            }
+
+            .linea{
+
+                border-top:1px dashed #000;
+
+                margin:6px 0;
+            }
+
+            .titulo{
+
+                font-size:13px;
+
+                font-weight:bold;
+
+                text-align:center;
+
+                margin-bottom:8px;
+            }
+
+            .ticket{
+
+                font-size:20px;
+
+                font-weight:bold;
+
+                text-align:center;
+
+                margin:10px 0;
+            }
+
+            .dato{
+
+                margin:4px 0;
+
+                font-size:11px;
+            }
+
+            .barcode{
+
+                text-align:center;
+
+                margin-top:10px;
+            }
+
+            .mensaje{
+
+                text-align:center;
+
+                margin-top:10px;
+
+                font-size:12px;
+
+                font-weight:bold;
+            }
+
+            .terminos{
+
+                margin-top:10px;
+
+                font-size:10px;
+
+                line-height:15px;
+
+                text-align:justify;
+            }
+
+            .footer{
+
+                margin-top:10px;
+
+                text-align:center;
+
+                font-size:11px;
+
+                font-weight:bold;
+            }
+
+            .total{
+
+                text-align:center;
+
+                font-size:20px;
+
+                font-weight:bold;
+
+                margin:15px 0;
+            }
+
+            .pagado{
+
+                text-align:center;
+
+                font-size:16px;
+
+                font-weight:bold;
+
+                margin-top:10px;
+            }
+
+        </style>
+
+    `;
+}
+
+// ==========================================
 // ABRIR TICKET
 // ==========================================
 function abrirTicket(html, ticketId){
@@ -336,6 +570,110 @@ function generarTicketSalida(data){
         <div class="footer">
 
             ¡Gracias por su visita!
+
+        </div>
+
+    </body>
+
+    </html>
+
+    `;
+}
+
+// ==========================================
+// TICKET MENSUALIDAD
+// ==========================================
+function generarTicketMensualidad(data){
+
+    return `
+
+    <html>
+
+    <head>
+
+        <title>
+
+            Mensualidad
+
+        </title>
+
+        ${generarEstilosTicket()}
+
+    </head>
+
+    <body>
+
+        ${generarHeaderTicket()}
+
+        <div class="linea"></div>
+
+        <div class="titulo">
+
+            MENSUALIDAD
+
+        </div>
+
+        <div class="ticket">
+
+            ${data.placa}
+
+        </div>
+
+        <div class="linea"></div>
+
+        <div class="dato">
+
+            <span>PROPIETARIO:</span><br>
+
+            <strong>${data.propietario}</strong>
+
+        </div>
+
+        <div class="dato">
+
+            <span>VEHÍCULO:</span>
+
+            <strong>${data.tipo}</strong>
+
+        </div>
+
+        <div class="dato">
+
+            <span>PLACA:</span>
+
+            <strong>${data.placa}</strong>
+
+        </div>
+
+        <div class="linea"></div>
+
+        <div class="dato">
+
+            <span>INICIO:</span>
+
+            <strong>${data.fecha_inicio}</strong>
+
+        </div>
+
+        <div class="dato">
+
+            <span>VENCE:</span>
+
+            <strong>${data.fecha_fin}</strong>
+
+        </div>
+
+        <div class="dato">
+
+            <span>ESTADO:</span>
+
+            <strong>${data.estado}</strong>
+
+        </div>
+
+        <div class="footer">
+
+            Gracias por preferirnos
 
         </div>
 

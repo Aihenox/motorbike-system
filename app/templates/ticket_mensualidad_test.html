@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Prueba Ticket</title>
+
+    <script src="{{ url_for('static', filename='js/tickets.js') }}"></script>
+
+</head>
+
+<body>
+
+    <button onclick="imprimirTicket()">
+
+        Probar Ticket Mensualidad
+
+    </button>
+
+    <script>
+
+    function imprimirTicket(){
+
+        const data = {
+
+            placa: "ABC123",
+
+            propietario: "Luis Montoya",
+
+            tipo: "Moto",
+
+            fecha_inicio: "01/08/2026",
+
+            fecha_fin: "31/08/2026",
+
+            estado: "ACTIVA"
+
+        };
+
+        abrirTicket(
+
+            generarTicketMensualidad(data),
+
+            data.placa
+
+        );
+
+    }
+
+    </script>
+
+</body>
+
+</html>
