@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nómina Lavadores</title>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+
+        body{
+            background:#eef2f7;
+            font-family:'Segoe UI';
+        }
+
+        .navbar{
+            box-shadow:0 3px 15px rgba(0,0,0,.08);
+        }
+
+        .titulo{
+            font-weight:700;
+            color:#1e293b;
+        }
+
+        .subtitulo{
+            color:#64748b;
+        }
+
+        .card-custom{
+            border:none;
+            border-radius:22px;
+            background:white;
+            box-shadow:0 10px 28px rgba(0,0,0,.06);
+        }
+
+        .metric-card{
+            border-radius:20px;
+            color:white;
+            padding:25px;
+            box-shadow:0 10px 25px rgba(0,0,0,.08);
+            transition:.2s;
+        }
+
+        .metric-card:hover{
+            transform:translateY(-4px);
+        }
+
+        .bg-empleados{
+            background:#2563eb;
+        }
+
+        .bg-bruto{
+            background:#16a34a;
+        }
+
+        .bg-descuentos{
+            background:#ea580c;
+        }
+
+        .bg-neto{
+            background:#111827;
+        }
+
+        .valor{
+            font-size:34px;
+            font-weight:700;
+        }
+
+        .icono{
+            font-size:34px;
+            opacity:.9;
+        }
+
+        .btn-accion{
+
+            min-width:105px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark bg-dark px-4 py-3">
+
+    <span class="navbar-brand fw-bold fs-4">
+
+        Nómina Lavadores
+
+    </span>
+
+    <div class="d-flex gap-2">
+
+        <a href="/cierre-caja"
+
+           class="btn btn-outline-light">
+
+            <i class="bi bi-arrow-left-circle"></i>
+
+            Cierre
+
+        </a>
+
+        <a href="#"
+
+           class="btn btn-outline-warning">
+
+            <i class="bi bi-clock-history"></i>
+
+            Historial Pagos
+
+        </a>
+
+    </div>
+
+</nav>
+
+<div class="container mt-4 mb-5">
+
+    <div class="mb-4">
+
+        <h2 class="titulo">
+
+            Gestión de Nómina
+
+        </h2>
+
+        <p class="subtitulo mb-0">
+
+            Pagos pendientes acumulados por empleado.
+
+        </p>
+
+    </div>
+
+    <!-- TARJETAS -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="metric-card bg-empleados">
+
+                <div class="d-flex justify-content-between">
+
+                    <h5>
+
+                        Lavadores
+
+                    </h5>
+
+                    <i class="bi bi-people-fill icono"></i>
+
+                </div>
+
+                <div class="valor">
+                    {{ resumen.empleados }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="metric-card bg-bruto">
+
+                <div class="d-flex justify-content-between">
+
+                    <h5>
+
+                        Bruto
+
+                    </h5>
+
+                    <i class="bi bi-cash-stack icono"></i>
+
+                </div>
+
+                <div class="valor">
+                    ${{ "{:,.0f}".format(resumen.bruto).replace(",", ".") }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="metric-card bg-descuentos">
+
+                <div class="d-flex justify-content-between">
+
+                    <h5>
+
+                        Descuentos
+
+                    </h5>
+
+                    <i class="bi bi-dash-circle-fill icono"></i>
+
+                </div>
+
+                <div class="valor">
+                    ${{ "{:,.0f}".format(resumen.descuentos).replace(",", ".") }}
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="metric-card bg-neto">
+
+                <div class="d-flex justify-content-between">
+
+                    <h5>
+
+                        Neto
+
+                    </h5>
+
+                    <i class="bi bi-wallet2 icono"></i>
+
+                </div>
+
+                <div class="valor">
+                    ${{ "{:,.0f}".format(resumen.neto).replace(",", ".") }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABLA -->
+
+    <div class="card card-custom">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-4">
+
+                <i class="bi bi-person-badge-fill text-primary"></i>
+
+                Nómina Pendiente
+
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Responsable</th>
+
+                            <th class="text-center">
+                                Servicios
+                            </th>
+
+                            <th class="text-end">
+                                Comisión (50%)
+                            </th>
+
+                            <th class="text-end">
+                                Descuentos
+                            </th>
+
+                            <th class="text-end">
+                                Total a liquidar
+                            </th>
+                            <th class="text-center">
+
+                                Acciones
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% if empleados %}
+
+                            {% for empleado in empleados %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>{{ empleado.responsable }}</strong>
+                                </td>
+
+                                <td class="text-center">
+                                    {{ empleado.servicios }}
+                                </td>
+
+                                <td class="text-end">
+                                    ${{ "{:,.0f}".format(empleado.comision).replace(",", ".") }}
+                                </td>
+
+                                <td class="text-end text-danger">
+                                    ${{ "{:,.0f}".format(empleado.descuentos).replace(",", ".") }}
+                                </td>
+
+                                <td class="text-end fw-bold text-success">
+                                    ${{ "{:,.0f}".format(empleado.total).replace(",", ".") }}
+                                </td>
+
+                                <td class="text-center">
+                                    
+                                    <button
+                                        class="btn btn-warning btn-sm btn-accion btn-descuento"
+                                        data-responsable="{{ empleado.responsable }}">
+
+                                        <i class="bi bi-dash-circle"></i>
+
+                                        Descuento
+
+                                    </button>
+
+                                    <button
+                                        class="btn btn-outline-primary btn-sm btn-accion btn-detalle"
+                                        data-responsable="{{ empleado.responsable }}">
+
+                                        <i class="bi bi-bar-chart-line"></i>
+
+                                        Detalle
+
+                                    </button>
+
+                                    <button
+                                        class="btn btn-success btn-sm btn-accion btn-liquidar"
+                                        data-responsable="{{ empleado.responsable }}">
+
+                                        <i class="bi bi-cash-coin"></i>
+
+                                        Liquidar
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        {% else %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center py-5 text-muted">
+
+                                No existen empleados con pagos pendientes.
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                        </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL DETALLE NÓMINA -->
+<!-- ========================================== -->
+<div
+    class="modal fade"
+    id="modalDetalleNomina"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h4 class="modal-title">
+
+                    <i class="bi bi-bar-chart-line-fill text-primary"></i>
+
+                    Detalle de Nómina
+
+                </h4>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <!-- EMPLEADO -->
+
+                <div class="mb-4">
+
+                    <h3 class="fw-bold mb-1" id="nombreEmpleado">
+                    </h3>
+
+                    <p class="text-muted mb-0">
+
+                        Información del período pendiente
+
+                    </p>
+
+                </div>
+
+                <!-- PERÍODO -->
+
+                <div class="card card-custom mb-4">
+
+                    <div class="card-body">
+
+                        <h5 class="fw-bold mb-3">
+
+                            Período de Liquidación
+
+                        </h5>
+
+                        <div class="row">
+
+                            <div class="col-md-3">
+
+                                <strong>Desde</strong>
+
+                                <div id="fechaDesde"></div>
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <strong>Hasta</strong>
+
+                                <div id="fechaHasta"></div>
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <strong>Último pago</strong>
+
+                                <div id="ultimoPago"></div>
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <strong>Días acumulados</strong>
+
+                                <div id="diasAcumulados"></div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TARJETAS -->
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-md-2">
+
+                        <div class="card text-center">
+
+                            <div class="card-body">
+
+                                <h6>Lavados</h6>
+
+                                <h3 id="totalLavados"></h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <div class="card text-center">
+
+                            <div class="card-body">
+
+                                <h6>Facturado</h6>
+
+                                <h3 id="valorLavados"></h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <div class="card text-center">
+
+                            <div class="card-body">
+
+                                <h6>Comisión (50%)</h6>
+
+                                <h3 id="totalComision"></h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-2">
+
+                        <div class="card text-center">
+
+                            <div class="card-body">
+
+                                <h6>Descuentos</h6>
+
+                                <h3 id="totalDescuentos"></h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <div class="card text-center bg-success text-white">
+
+                            <div class="card-body">
+
+                                <h6>Neto</h6>
+
+                                <h2 id="totalNeto"></h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TABLA LAVADOS -->
+
+                <h5 class="fw-bold mb-3">
+
+                    Resumen por día
+
+                </h5>
+
+                <div class="table-responsive">
+
+                    <table class="table table-striped align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Fecha</th>
+
+                                <th class="text-center">
+                                    Motos
+                                </th>
+
+                                <th class="text-center">
+                                    Carros
+                                </th>
+
+                                <th class="text-center">
+                                    Vehículos
+                                </th>
+
+                                <th class="text-end">
+                                    Valor Lavados
+                                </th>
+
+                                <th class="text-end">
+                                    Comisión
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="detalleNominaBody">
+
+                            <!-- Se llena con JavaScript -->
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+                <!-- TABLA DESCUENTOS -->
+
+                <h5 class="fw-bold mt-4 mb-3">
+
+                    Descuentos
+
+                </h5>
+
+                <table class="table table-striped">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Fecha</th>
+
+                            <th>Concepto</th>
+
+                            <th class="text-end">
+
+                                Valor
+
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="tablaDescuentosBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cerrar
+
+                </button>
+
+                <button
+                    id="btnLiquidarNomina"
+                    class="btn btn-success">
+
+                    <i class="bi bi-cash-coin"></i>
+
+                    Confirmar liquidación
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL DESCUENTO -->
+<!-- ========================================== -->
+
+<div
+    class="modal fade"
+    id="modalDescuento"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-dash-circle text-warning"></i>
+
+                    Registrar descuento
+
+                </h5>
+
+                <button
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <input
+                    type="hidden"
+                    id="descuentoResponsable">
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Responsable
+
+                    </label>
+
+                    <input
+                        id="descuentoNombre"
+                        class="form-control"
+                        readonly>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Concepto
+
+                    </label>
+
+                    <input
+                        id="descuentoConcepto"
+                        class="form-control">
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Valor
+
+                    </label>
+
+                    <input
+                        id="descuentoValor"
+                        type="number"
+                        class="form-control">
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    id="btnGuardarDescuento"
+                    class="btn btn-warning">
+
+                    Guardar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/csrf.js') }}"></script>
+<script>
+
+const modalDetalle = new bootstrap.Modal(
+    document.getElementById("modalDetalleNomina")
+);
+
+const modalDescuento = new bootstrap.Modal(
+    document.getElementById("modalDescuento")
+);
+
+let responsableSeleccionado = "";
+
+document.querySelectorAll(".btn-detalle").forEach(boton => {
+
+    boton.addEventListener("click", async () => {
+
+        const responsable = boton.dataset.responsable;
+        responsableSeleccionado = responsable;
+        try{
+
+            const respuesta = await fetch(
+                `/nomina/detalle/${encodeURIComponent(responsable)}`
+            );
+
+            const datos = await respuesta.json();
+
+            document.getElementById("nombreEmpleado").textContent =
+                datos.resumen.responsable;
+
+            document.getElementById("fechaDesde").textContent =
+                datos.resumen.desde;
+
+            document.getElementById("fechaHasta").textContent =
+                datos.resumen.hasta;
+
+            document.getElementById("ultimoPago").textContent =
+                datos.resumen.ultimo_pago;
+
+            document.getElementById("diasAcumulados").textContent =
+                datos.resumen.dias + " días";
+
+            document.getElementById("totalLavados").textContent =
+                datos.resumen.lavados;
+
+            document.getElementById("valorLavados").textContent =
+                "$" + Number(datos.resumen.valor_lavados).toLocaleString("es-CO");
+
+            document.getElementById("totalComision").textContent =
+                "$" + Number(datos.resumen.comision).toLocaleString("es-CO");
+
+            document.getElementById("totalDescuentos").textContent =
+                "$" + Number(datos.resumen.descuentos).toLocaleString("es-CO");
+
+            document.getElementById("totalNeto").textContent =
+                "$" + Number(datos.resumen.neto).toLocaleString("es-CO");
+
+            const tbody = document.getElementById("detalleNominaBody");
+
+            tbody.innerHTML = "";
+
+            const tbodyDescuentos = document.getElementById("tablaDescuentosBody");
+
+            tbodyDescuentos.innerHTML = "";
+
+            datos.descuentos.forEach(descuento => {
+
+                tbodyDescuentos.innerHTML += `
+
+                    <tr>
+
+                        <td>${descuento.fecha}</td>
+
+                        <td>${descuento.concepto}</td>
+
+                        <td class="text-end">
+
+                            $${Number(descuento.valor).toLocaleString("es-CO")}
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+            if (datos.descuentos.length === 0) {
+
+            tbodyDescuentos.innerHTML = `
+
+                <tr>
+
+                    <td colspan="3" class="text-center text-muted">
+
+                        Sin descuentos pendientes
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        } 
+
+            datos.detalle.forEach(dia => {
+
+                tbody.innerHTML += `
+
+                    <tr>
+
+                        <td>${dia.fecha}</td>
+
+                        <td class="text-center">${dia.motos}</td>
+
+                        <td class="text-center">${dia.carros}</td>
+
+                        <td class="text-center">${dia.vehiculos}</td>
+
+                        <td class="text-end">
+                            $${Number(dia.valor_lavados).toLocaleString("es-CO")}
+                        </td>
+
+                        <td class="text-end">
+                            $${Number(dia.comision).toLocaleString("es-CO")}
+                        </td>
+
+                    </tr>
+
+                `;
+
+            });
+
+            modalDetalle.show();
+
+        }
+
+        catch(error){
+
+            console.error(error);
+
+            alert("No fue posible cargar el detalle.");
+
+        }
+
+    });
+
+});
+
+document.getElementById("btnLiquidarNomina").addEventListener("click", async () => {
+
+    const password = prompt("Ingrese la contraseña del administrador");
+
+    if (!password) return;
+
+    try {
+
+        // Validar administrador
+        const validar = await fetch("/lavadero/validar_admin", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                password: password
+            })
+
+        });
+
+        const admin = await validar.json();
+
+        if (!admin.success) {
+
+            alert("Contraseña incorrecta.");
+
+            return;
+
+        }
+
+        // Liquidar nómina
+        const respuesta = await fetch("/nomina/liquidar", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                responsable: responsableSeleccionado
+
+            })
+
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!resultado.success) {
+
+            alert("No fue posible realizar la liquidación.");
+
+            return;
+
+        }
+
+        alert("Liquidación realizada correctamente.");
+
+        modalDetalle.hide();
+
+        location.reload();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Ocurrió un error al liquidar la nómina.");
+
+    }
+
+});
+
+document.querySelectorAll(".btn-descuento").forEach(boton => {
+
+    boton.addEventListener("click", () => {
+
+        const responsable = boton.dataset.responsable;
+
+        document.getElementById("descuentoResponsable").value =
+            responsable;
+
+        document.getElementById("descuentoNombre").value =
+            responsable;
+
+        document.getElementById("descuentoConcepto").value = "";
+
+        document.getElementById("descuentoValor").value = "";
+
+        modalDescuento.show();
+
+    });
+
+});
+
+document.getElementById("btnGuardarDescuento").addEventListener("click", async () => {
+
+    const responsable = document.getElementById("descuentoResponsable").value;
+
+    const concepto = document.getElementById("descuentoConcepto").value.trim();
+
+    const valor = document.getElementById("descuentoValor").value;
+
+    if (concepto === "") {
+
+        alert("Debe ingresar un concepto.");
+
+        return;
+
+    }
+
+    if (valor === "" || Number(valor) <= 0) {
+
+        alert("Ingrese un valor válido.");
+
+        return;
+
+    }
+
+    try {
+
+        const respuesta = await fetch("/nomina/descuento", {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+                responsable,
+
+                concepto,
+
+                valor
+
+            })
+
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!resultado.success) {
+
+            alert(resultado.mensaje || "No fue posible registrar el descuento.");
+
+            return;
+
+        }
+
+        alert("Descuento registrado correctamente.");
+
+        modalDescuento.hide();
+
+        location.reload();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Ocurrió un error al registrar el descuento.");
+
+    }
+
+});
+document.querySelectorAll(".btn-liquidar").forEach(boton => {
+
+    boton.addEventListener("click", () => {
+
+        boton.parentElement.querySelector(".btn-detalle").click();
+
+    });
+
+});
+
+</script>
+
+
+</body>
+
+</html>

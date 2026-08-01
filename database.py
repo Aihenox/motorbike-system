@@ -46,7 +46,22 @@ def crear_bd():
             id_type
         )
 
+        crear_tabla_gastos(
+            c,
+            id_type
+        )
+
         crear_tabla_tarifas(
+            c,
+            id_type
+        )
+
+        crear_tabla_descuentos_lavadores(
+            c,
+            id_type
+        )
+
+        crear_tabla_pagos_lavadores(
             c,
             id_type
         )
@@ -67,6 +82,10 @@ def crear_bd():
         )
 
         actualizar_tabla_ingresos(c)
+
+        actualizar_tablas_nomina(c)
+
+        actualizar_tabla_cierres(c)
 
         crear_indices(c)
 
@@ -133,9 +152,6 @@ def crear_tabla_usuarios(
     """)
 
 
-# ==========================================
-# LAVADOS
-# ==========================================
 def crear_tabla_lavados(
     c,
     id_type
@@ -155,15 +171,18 @@ def crear_tabla_lavados(
 
             valor INTEGER NOT NULL,
 
+            valor_comision INTEGER NOT NULL,
+
             responsable TEXT NOT NULL,
 
-            fecha TEXT NOT NULL
+            fecha TEXT NOT NULL,
+
+            cortesia INTEGER DEFAULT 0
 
         )
 
     """)
-
-
+    
 # ==========================================
 # CIERRES
 # ==========================================
@@ -179,6 +198,14 @@ def crear_tabla_cierres(
             id {id_type},
 
             fecha TEXT NOT NULL,
+
+            saldo_inicial INTEGER NOT NULL DEFAULT 0,
+
+            ingresos_dia INTEGER NOT NULL DEFAULT 0,
+
+            egresos_dia INTEGER NOT NULL DEFAULT 0,
+
+            saldo_final INTEGER NOT NULL DEFAULT 0,
 
             total_parqueadero INTEGER NOT NULL,
 
@@ -196,6 +223,95 @@ def crear_tabla_cierres(
 
     """)
 
+# ==========================================
+# GASTOS
+# ==========================================
+def crear_tabla_gastos(
+    c,
+    id_type
+):
+
+    c.execute(f"""
+
+        CREATE TABLE IF NOT EXISTS gastos(
+
+            id {id_type},
+
+            fecha TEXT NOT NULL,
+
+            concepto TEXT NOT NULL,
+
+            valor INTEGER NOT NULL,
+
+            usuario TEXT NOT NULL,
+
+            hora TEXT NOT NULL
+
+        )
+
+    """)
+
+# ==========================================
+# DESCUENTOS LAVADORES
+# ==========================================
+def crear_tabla_descuentos_lavadores(
+    c,
+    id_type
+):
+
+    c.execute(f"""
+
+        CREATE TABLE IF NOT EXISTS descuentos_lavadores(
+
+            id {id_type},
+
+            fecha TEXT NOT NULL,
+
+            responsable TEXT NOT NULL,
+
+            concepto TEXT NOT NULL,
+
+            valor INTEGER NOT NULL,
+
+            usuario TEXT NOT NULL,
+
+            hora TEXT NOT NULL
+
+        )
+
+    """)
+
+# ==========================================
+# PAGOS LAVADORES
+# ==========================================
+def crear_tabla_pagos_lavadores(
+    c,
+    id_type
+):
+
+    c.execute(f"""
+
+        CREATE TABLE IF NOT EXISTS pagos_lavadores(
+
+            id {id_type},
+
+            responsable TEXT NOT NULL,
+
+            fecha_pago TEXT NOT NULL,
+
+            total_bruto INTEGER NOT NULL,
+
+            total_descuentos INTEGER NOT NULL,
+
+            total_pagado INTEGER NOT NULL,
+
+            usuario TEXT NOT NULL,
+
+            hora TEXT NOT NULL
+
+        )
+
+    """)
 
 # ==========================================
 # CONFIGURACION TARIFAS
@@ -404,6 +520,199 @@ def actualizar_tabla_ingresos(c):
 
                 pass
 
+# ==========================================
+# MIGRACION NOMINA
+# ==========================================
+def actualizar_tablas_nomina(c):
+
+    postgres = os.getenv(
+        "DATABASE_URL"
+    )
+
+    tablas = [
+
+        (
+            "lavados",
+            "pagado",
+            "INTEGER DEFAULT 0"
+        ),
+
+        (
+            "lavados",
+            "valor_comision",
+            "INTEGER DEFAULT 0"
+        ),
+
+        (
+            "lavados",
+            "cortesia",
+            "INTEGER DEFAULT 0"
+        ),
+
+        (
+            "descuentos_lavadores",
+            "pagado",
+            "INTEGER DEFAULT 0"
+        )
+        
+
+    ]
+
+    for tabla, columna, tipo in tablas:
+
+        if postgres:
+
+            c.execute("""
+
+                SELECT column_name
+
+                FROM information_schema.columns
+
+                WHERE table_name=%s
+
+                AND column_name=%s
+
+            """, (
+
+                tabla,
+
+                columna
+
+            ))
+
+            existe = c.fetchone()
+
+            if not existe:
+
+                c.execute(
+
+                    f"""
+
+                    ALTER TABLE {tabla}
+
+                    ADD COLUMN {columna} {tipo}
+
+                    """
+
+                )
+
+        else:
+
+            try:
+
+                c.execute(
+
+                    f"""
+
+                    ALTER TABLE {tabla}
+
+                    ADD COLUMN {columna} {tipo}
+
+                    """
+
+                )
+
+            except Exception:
+
+                pass
+
+    # ==========================================
+    # INICIALIZAR VALOR COMISION
+    # ==========================================
+
+    try:
+
+        c.execute("""
+
+            UPDATE lavados
+
+            SET valor_comision = valor
+
+            WHERE valor_comision = 0
+              AND valor > 0
+
+        """)
+
+    except Exception:
+
+        pass       
+
+# ==========================================
+# MIGRACION CIERRES
+# ==========================================
+def actualizar_tabla_cierres(c):
+
+    postgres = os.getenv("DATABASE_URL")
+
+    columnas = [
+
+        ("saldo_inicial", "INTEGER DEFAULT 0"),
+
+        ("ingresos_dia", "INTEGER DEFAULT 0"),
+
+        ("egresos_dia", "INTEGER DEFAULT 0"),
+
+        ("saldo_final", "INTEGER DEFAULT 0")
+
+    ]
+
+    for nombre, tipo in columnas:
+
+        if postgres:
+
+            c.execute("""
+
+                SELECT column_name
+
+                FROM information_schema.columns
+
+                WHERE table_name=%s
+
+                AND column_name=%s
+
+            """, (
+
+                "cierres_caja",
+
+                nombre
+
+            ))
+
+            existe = c.fetchone()
+
+            if not existe:
+
+                c.execute(
+
+                    f"""
+
+                    ALTER TABLE cierres_caja
+
+                    ADD COLUMN {nombre} {tipo}
+
+                    """
+
+                )
+
+        else:
+
+            try:
+
+                c.execute(
+
+                    f"""
+
+                    ALTER TABLE cierres_caja
+
+                    ADD COLUMN {nombre} {tipo}
+
+                    """
+
+                )
+
+            except Exception:
+
+                pass
 
 # ==========================================
 # TARIFAS POR DEFECTO

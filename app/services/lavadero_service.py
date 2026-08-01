@@ -1,22 +1,14 @@
 from app.repositories.lavadero_repository import (
-
     registrar_lavado_db,
-
     obtener_historial_lavados_db,
-
     obtener_metricas_lavadero_db,
-
     obtener_ultimos_lavados_db,
-
     obtener_estadisticas_responsables_db,
-
     obtener_lavado_por_id_db,
-
     actualizar_lavado_db,
-
     eliminar_lavado_db,
-
-    contar_lavados_placa_db
+    contar_lavados_placa_db,
+    placa_ya_tuvo_cortesia_db
 )
 
 from app.utils.validators import (
@@ -57,12 +49,6 @@ def registrar_lavado(
         placa
     )
 
-    if validar_lavado_gratis(
-        placa
-    ):
-
-        valor = 0
-
     vehiculo = validar_tipo_vehiculo(
         vehiculo
     )
@@ -79,29 +65,28 @@ def registrar_lavado(
         responsable
     )
 
-    gratis = False
+    # Valor real del servicio para calcular comisión
+    valor_comision = valor
 
-    if validar_lavado_gratis(
-        placa
-    ):
+    gratis = False
+    cortesia = 0
+
+    if validar_lavado_gratis(placa):
 
         valor = 0
-
         gratis = True
+        cortesia = 1
 
     registrar_lavado_db(
 
         placa,
-
         vehiculo,
-
         tipo_lavado,
-
         valor,
-
+        valor_comision,
         responsable,
-
-        fecha
+        fecha,
+        cortesia
     )
 
     return {
@@ -110,7 +95,6 @@ def registrar_lavado(
 
         "valor": valor
     }
-
 
 # ==========================================
 # LISTAR LAVADOS
@@ -265,13 +249,16 @@ def validar_lavado_gratis(
     placa
 ):
 
-    cantidad = contar_lavados_placa_db(
-        placa
-    )
+    def validar_lavado_gratis(placa):
 
-    siguiente = cantidad + 1
+        if placa_ya_tuvo_cortesia_db(placa):
+            return False
 
-    return siguiente % 5 == 0
+        cantidad = contar_lavados_placa_db(
+            placa
+        )
+
+        return (cantidad + 1) == 5
 
 # ==========================================
 # CONTAR LAVADOS PLACA

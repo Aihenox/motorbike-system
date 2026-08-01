@@ -52,12 +52,29 @@
         }
 
         .metric-card{
+
             border-radius:22px;
-            padding:28px;
+
+            padding:30px;
+
             color:white;
-            height:100%;
-            transition:.2s;
-            box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+            min-height:220px;
+
+            display:flex;
+
+            flex-direction:column;
+
+            justify-content:center;
+
+            align-items:center;
+
+            text-align:center;
+
+            transition:.25s;
+
+            box-shadow:0 12px 28px rgba(0,0,0,.10);
+
         }
 
         .metric-card:hover{
@@ -77,13 +94,23 @@
         }
 
         .valor{
-            font-size:38px;
+
+            font-size:42px;
+
             font-weight:700;
+
+            margin:18px 0 10px;
+
+            line-height:1;
+
         }
 
         .icono{
-            font-size:38px;
-            opacity:.9;
+
+            font-size:48px;
+
+            opacity:.90;
+
         }
 
         textarea{
@@ -101,6 +128,159 @@
         .alert{
             border-radius:16px;
         }
+
+        .table-hover tbody tr:hover{
+
+            background:#f8fafc;
+
+        }
+
+        .table thead{
+
+            vertical-align:middle;
+
+        }
+
+        .table tfoot{
+
+            font-weight:700;
+
+        }
+
+        .btn-sm{
+
+            border-radius:10px;
+
+        }
+
+        .table td{
+
+            padding-top:14px;
+
+            padding-bottom:14px;
+
+        }
+
+        .metric-card small{
+
+            font-size:.90rem;
+
+            opacity:.85;
+
+        }
+    /* ==========================================
+    RESUMEN FINANCIERO
+    ========================================== */
+
+    .resumen-item{
+
+        display:flex;
+
+        justify-content:space-between;
+
+        align-items:center;
+
+        padding:16px 18px;
+
+        margin-bottom:12px;
+
+        border-radius:14px;
+
+        background:#f8fafc;
+
+        border:1px solid #e2e8f0;
+
+        font-size:15px;
+
+    }
+
+    .resumen-total{
+
+        display:flex;
+
+        justify-content:space-between;
+
+        align-items:center;
+
+        padding:18px;
+
+        border-radius:18px;
+
+        background:#eff6ff;
+
+        border:2px solid #2563eb;
+
+        font-size:22px;
+
+        font-weight:700;
+
+        color:#1d4ed8;
+
+    }
+
+    /* ==========================================
+    TARJETAS LAVADORES
+    ========================================== */
+
+    .lavador-card{
+
+        border:1px solid #e5e7eb;
+
+        border-radius:18px;
+
+        padding:18px;
+
+        margin-bottom:16px;
+
+        background:#fff;
+
+        transition:.2s;
+
+    }
+
+    .lavador-card:hover{
+
+        transform:translateY(-2px);
+
+        box-shadow:0 10px 20px rgba(0,0,0,.06);
+
+    }
+
+    .lavador-item{
+
+        display:flex;
+
+        justify-content:space-between;
+
+        margin-top:10px;
+
+        font-size:.95rem;
+
+    }
+
+    .total-lavadores{
+
+        background:#ecfdf5;
+
+        border:2px solid #16a34a;
+
+        border-radius:18px;
+
+        padding:20px;
+
+        text-align:center;
+
+    }
+
+    .total-lavadores h3{
+
+        margin:0;
+
+        color:#15803d;
+
+        font-weight:700;
+
+    }
 
     </style>
 
@@ -132,6 +312,15 @@
 
         </a>
 
+        <a href="/nomina"
+            class="btn btn-outline-light">
+
+                <i class="bi bi-cash-stack"></i>
+
+                Nómina
+
+        </a>
+
         <!-- DASHBOARD -->
         <a href="/dashboard"
            class="btn btn-outline-light">
@@ -158,7 +347,7 @@
 
         <p class="subtitulo mb-0">
 
-            Control de ingresos generados hoy
+            Control financiero de la operación del día
 
         </p>
 
@@ -167,80 +356,524 @@
     <!-- MÉTRICAS -->
     <div class="row g-4 mb-4">
 
-        <!-- PARQUEADERO -->
+        <!-- FLUJO DE CAJA -->
         <div class="col-md-4">
 
             <div class="metric-card bg-parqueadero">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
+            <i class="bi bi-wallet2 icono"></i>
 
-                    <h5 class="mb-0">
+            <div class="valor">
 
-                        Parqueadero
-
-                    </h5>
-
-                    <i class="bi bi-p-circle-fill icono"></i>
-
-                </div>
-
-                <div class="valor">
-
-                    $ {{ "{:,}".format(total_parqueadero or 0) }}
-
-                </div>
+                $ {{ "{:,}".format(saldo_actual or 0) }}
 
             </div>
 
+            <h5 class="fw-bold mb-1">
+
+                Flujo de Caja
+
+            </h5>
+
+            <small>
+
+                Saldo disponible
+
+            </small>
+
         </div>
 
-        <!-- LAVADERO -->
+        </div>
+
+        <!-- INGRESOS DEL DIA -->
         <div class="col-md-4">
 
-            <div class="metric-card bg-lavadero">
+           <div class="metric-card bg-lavadero">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-
-                    <h5 class="mb-0">
-
-                        Lavadero
-
-                    </h5>
-
-                    <i class="bi bi-droplet-fill icono"></i>
-
-                </div>
+                <i class="bi bi-graph-up-arrow icono"></i>
 
                 <div class="valor">
 
-                    $ {{ "{:,}".format(total_lavadero or 0) }}
+                    $ {{ "{:,}".format(ingresos_dia or 0) }}
 
                 </div>
+
+                <h5 class="fw-bold mb-1">
+
+                    Ingresos del día
+
+                </h5>
+
+                <small>
+
+                    Parqueadero + Lavadero
+
+                </small>
 
             </div>
 
         </div>
 
-        <!-- TOTAL -->
+        <!-- EGRESOS DEL DIA -->
         <div class="col-md-4">
 
             <div class="metric-card bg-total">
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
-
-                    <h5 class="mb-0">
-
-                        Total General
-
-                    </h5>
-
-                    <i class="bi bi-cash-stack icono"></i>
-
-                </div>
+                <i class="bi bi-graph-down-arrow icono"></i>
 
                 <div class="valor">
 
-                    $ {{ "{:,}".format(total_general or 0) }}
+                    $ {{ "{:,}".format(egresos_dia or 0) }}
+
+                </div>
+
+                <h5 class="fw-bold mb-1">
+
+                    Egresos del día
+
+                </h5>
+
+                <small>
+
+                    Gastos + Nómina
+
+                </small>
+
+            </div>
+
+    </div>
+
+    <!-- RESUMEN FINANCIERO Y GASTOS -->
+    <div class="row g-4 mb-4">
+
+        <!-- RESUMEN -->
+        <div class="col-lg-5">
+
+            <div class="card card-custom h-100">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-4">
+
+                        <i class="bi bi-bar-chart-line-fill text-primary"></i>
+
+                        Resumen Financiero
+
+                    </h5>
+
+                    <!-- INGRESOS -->
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold text-success mb-3">
+                            <i class="bi bi-arrow-up-circle-fill"></i>
+                            Ingresos
+                        </h6>
+
+                        <div class="resumen-total mb-3">
+
+                            <span>Total ingresos</span>
+
+                            <span>
+                                $ {{ "{:,}".format(ingresos_dia or 0) }}
+                            </span>
+
+                        </div>
+
+                        <div class="resumen-item">
+
+                            <span>🚿 Lavadero</span>
+
+                            <strong>
+                                $ {{ "{:,}".format(detalle_ingresos.lavadero or 0) }}
+                            </strong>
+
+                        </div>
+
+                        <div class="resumen-item">
+
+                            <span>🏍 Parqueadero</span>
+
+                            <strong>
+                                $ {{ "{:,}".format(detalle_ingresos.parqueadero or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- EGRESOS -->
+
+                    <div class="mb-4">
+
+                        <h6 class="fw-bold text-danger mb-3">
+                            <i class="bi bi-arrow-down-circle-fill"></i>
+                            Egresos
+                        </h6>
+
+                        <div class="resumen-total mb-3">
+
+                            <span>Total egresos</span>
+
+                            <span>
+                                $ {{ "{:,}".format(egresos_dia or 0) }}
+                            </span>
+
+                        </div>
+
+                        <div class="resumen-item">
+
+                            <span>👷 Nómina</span>
+
+                            <strong>
+                                $ {{ "{:,}".format(detalle_egresos.nomina or 0) }}
+                            </strong>
+
+                        </div>
+
+                        <div class="resumen-item">
+
+                            <span>🛒 Gastos</span>
+
+                            <strong>
+                                $ {{ "{:,}".format(detalle_egresos.gastos or 0) }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <hr>
+
+                    <!-- FLUJO -->
+
+                    <div class="resumen-item">
+
+                        <span>Saldo inicial</span>
+
+                        <strong>
+                            $ {{ "{:,}".format(saldo_inicial or 0) }}
+                        </strong>
+
+                    </div>
+
+                    <div class="resumen-total">
+
+                        <span>
+                            <i class="bi bi-wallet-fill me-2"></i>
+                            Saldo actual
+                        </span>
+
+                        <span>
+                            $ {{ "{:,}".format(saldo_actual or 0) }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-7">
+
+            <div class="row g-4">
+
+                <!-- ========================================== -->
+                <!-- GASTOS DEL DÍA -->
+                <!-- ========================================== -->
+                <div class="col-12">
+
+                    <div class="card card-custom">
+
+                        <div class="card-body">
+
+                            <!-- ENCABEZADO -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                                <div>
+
+                                    <h5 class="fw-bold mb-1">
+
+                                        <i class="bi bi-wallet2 text-danger"></i>
+
+                                        Gastos del día
+
+                                    </h5>
+
+                                    <small class="text-muted">
+
+                                        Registro de egresos de la jornada
+
+                                    </small>
+
+                                </div>
+
+                                <button
+                                    class="btn btn-danger btn-custom"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalGasto">
+
+                                    <i class="bi bi-plus-circle"></i>
+
+                                    Registrar gasto
+
+                                </button>
+
+                            </div>
+
+                            <div class="table-responsive">
+
+                                <table class="table table-hover align-middle">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th width="60%">
+                                                Concepto
+                                            </th>
+
+                                            <th class="text-end">
+                                                Valor
+                                            </th>
+
+                                            <th class="text-center">
+                                                Acciones
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {% if gastos %}
+
+                                            {% for gasto in gastos %}
+
+                                            <tr>
+
+                                                <td>
+
+                                                    <i class="bi bi-receipt text-secondary me-2"></i>
+
+                                                    {{ gasto.concepto }}
+
+                                                </td>
+
+                                                <td class="text-end fw-semibold">
+
+                                                    $ {{ "{:,}".format(gasto.valor) }}
+
+                                                </td>
+
+                                                <td class="text-center">
+
+                                                    <button
+                                                        class="btn btn-outline-primary btn-sm me-1"
+                                                        onclick="abrirEditarGasto('{{ gasto.id }}')">
+
+                                                        <i class="bi bi-pencil"></i>
+
+                                                    </button>
+
+                                                    <button
+                                                        class="btn btn-outline-danger btn-sm btnEliminarGasto"
+                                                        data-id="{{ gasto.id }}">
+
+                                                        <i class="bi bi-trash"></i>
+
+                                                    </button>
+
+                                                </td>
+
+                                            </tr>
+
+                                            {% endfor %}
+
+                                        {% else %}
+
+                                            <tr>
+
+                                                <td
+                                                    colspan="3"
+                                                    class="text-center text-muted py-4">
+
+                                                    <i class="bi bi-wallet2 fs-3 d-block mb-2"></i>
+
+                                                    No se han registrado gastos.
+
+                                                </td>
+
+                                            </tr>
+
+                                        {% endif %}
+
+                                    </tbody>
+
+                                    <tfoot>
+
+                                        <tr class="table-light">
+
+                                            <th>
+
+                                                Total Gastos
+
+                                            </th>
+
+                                            <th class="text-end text-danger fs-5">
+
+                                                $ {{ "{:,}".format(total_gastos or 0) }}
+
+                                            </th>
+
+                                            <th></th>
+
+                                        </tr>
+
+                                    </tfoot>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- PAGO LAVADORES -->
+                <div class="col-12">
+
+                    <div class="card card-custom">
+
+                        <div class="card-body">
+
+                            <h5 class="fw-bold mb-4">
+
+                                <i class="bi bi-person-badge-fill text-warning"></i>
+
+                                Pago de Lavadores
+
+                            </h5>
+
+                            <div class="row g-3">
+
+                            {% if pagos_lavadores %}
+
+                                {% for pago in pagos_lavadores %}
+
+                                <div class="col-md-6">
+
+                                    <div class="lavador-card h-100">
+
+                                        <h6 class="fw-bold mb-3">
+
+                                            <i class="bi bi-person-circle text-primary me-2"></i>
+
+                                            {{ pago.responsable }}
+
+                                        </h6>
+
+                                        <div class="lavador-item">
+
+                                            <span>
+
+                                                💵 Comisión
+
+                                            </span>
+
+                                            <strong>
+
+                                                $ {{ "{:,}".format(pago.total) }}
+
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="lavador-item">
+
+                                            <span>
+
+                                                🔻 Descuentos
+
+                                            </span>
+
+                                            <strong class="text-danger">
+
+                                                $ {{ "{:,}".format(pago.descuento) }}
+
+                                            </strong>
+
+                                        </div>
+
+                                        <div class="lavador-item">
+
+                                            <span>
+
+                                                ✅ Pago Neto
+
+                                            </span>
+
+                                            <strong class="text-success">
+
+                                                $ {{ "{:,}".format(pago.neto) }}
+
+                                            </strong>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                            <div class="col-12">
+
+                                <div class="text-center text-muted py-5">
+
+                                    <i class="bi bi-person-x fs-1"></i>
+
+                                    <p class="mt-3">
+
+                                        No hay lavadores para liquidar.
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            {% endif %}
+
+                            </div>
+
+                            <div class="total-lavadores mt-4">
+
+                                <small class="text-muted">
+
+                                    Total a pagar
+
+                                </small>
+
+                                <h3>
+
+                                    $ {{ "{:,}".format(total_pago_lavadores or 0) }}
+
+                                </h3>
+
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -327,6 +960,674 @@
     </div>
 
 </div>
+
+<!-- ========================================== -->
+<!-- MODAL AGREGAR GASTO -->
+<!-- ========================================== -->
+<div
+    class="modal fade"
+    id="modalGasto"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-wallet2 text-danger"></i>
+
+                    Registrar gasto
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form
+                id="formGasto">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Concepto
+
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="txtConcepto"
+                            maxlength="100"
+                            required>
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+
+                            Valor
+
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="txtValor"
+                            min="1"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger">
+
+                        <i class="bi bi-save"></i>
+
+                        Guardar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL EDITAR GASTO -->
+<!-- ========================================== -->
+<div
+    class="modal fade"
+    id="modalEditarGasto"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i class="bi bi-pencil-square text-primary"></i>
+
+                    Editar gasto
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form id="formEditarGasto">
+
+                <input
+                    type="hidden"
+                    id="editId">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+
+                            Concepto
+
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editConcepto"
+                            maxlength="100"
+                            required>
+
+                    </div>
+
+                    <div>
+
+                        <label class="form-label">
+
+                            Valor
+
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="editValor"
+                            min="1"
+                            required>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                        Cancelar
+
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-save"></i>
+
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================================== -->
+<!-- MODAL ELIMINAR GASTO -->
+<!-- ========================================== -->
+<div
+    class="modal fade"
+    id="modalEliminarGasto"
+    tabindex="-1"
+    aria-hidden="true">
+
+    <div class="modal-dialog modal-sm">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    Confirmar eliminación
+
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p class="mb-3">
+
+                    Ingrese la contraseña del administrador.
+
+                </p>
+
+                <input
+                    type="password"
+                    class="form-control"
+                    id="txtPasswordAdmin"
+                    placeholder="Contraseña">
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancelar
+
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-danger"
+                    id="btnConfirmarEliminar">
+
+                    Eliminar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+let gastoSeleccionado = null;
+
+document
+    .querySelectorAll(".btnEliminarGasto")
+    .forEach(
+
+        function(boton){
+
+            boton.addEventListener(
+
+                "click",
+
+                function(){
+
+                    gastoSeleccionado = this.dataset.id;
+
+                    document.getElementById(
+
+                        "txtPasswordAdmin"
+
+                    ).value = "";
+
+                    new bootstrap.Modal(
+
+                        document.getElementById(
+
+                            "modalEliminarGasto"
+
+                        )
+
+                    ).show();
+
+                }
+
+            );
+
+        }
+
+    );
+
+async function abrirEditarGasto(id){
+
+    try{
+
+        const response = await fetch(
+
+            "/gastos/" + id
+
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        document.getElementById(
+
+            "editId"
+
+        ).value = data.gasto.id;
+
+        document.getElementById(
+
+            "editConcepto"
+
+        ).value = data.gasto.concepto;
+
+        document.getElementById(
+
+            "editValor"
+
+        ).value = data.gasto.valor;
+
+        new bootstrap.Modal(
+
+            document.getElementById(
+
+                "modalEditarGasto"
+
+            )
+
+        ).show();
+
+    }
+
+    catch(error){
+
+        alert(
+
+            "No fue posible cargar el gasto."
+
+        );
+
+    }
+
+}
+
+document
+    .getElementById("formGasto")
+    .addEventListener(
+
+        "submit",
+
+        async function(e){
+
+            e.preventDefault();
+
+            const formData = new FormData();
+
+            formData.append(
+
+                "concepto",
+
+                document.getElementById("txtConcepto").value
+
+            );
+
+            formData.append(
+
+                "valor",
+
+                document.getElementById("txtValor").value
+
+            );
+
+            try{
+
+                const response = await fetch(
+
+                    "/gastos/agregar",
+
+                    {
+
+                        method:"POST",
+
+                        body:formData,
+
+                    }
+
+                );
+
+                const data = await response.json();
+
+                if(!data.success){
+
+                    alert(data.message);
+
+                    return;
+
+                }
+
+                alert(data.message);
+
+                bootstrap.Modal
+                    .getInstance(
+
+                        document.getElementById("modalGasto")
+
+                    )
+                    .hide();
+
+                document
+                    .getElementById("formGasto")
+                    .reset();
+
+                location.reload();
+
+            }
+
+            catch(error){
+
+                alert(
+
+                    "Ocurrió un error al guardar el gasto."
+
+                );
+
+            }
+
+        }
+
+    );
+
+document
+    .getElementById("btnConfirmarEliminar")
+    .addEventListener(
+
+        "click",
+
+        async function(){
+
+            const password = document
+                .getElementById(
+                    "txtPasswordAdmin"
+                )
+                .value;
+
+            if(!password){
+
+                alert("Ingrese la contraseña.");
+
+                return;
+
+            }
+
+            // Validar administrador
+            const validar = await fetch(
+
+                "/lavadero/validar_admin",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":"application/json"
+
+                    },
+
+                    body:JSON.stringify({
+
+                        password:password
+
+                    })
+
+                }
+
+            );
+
+            const respuesta = await validar.json();
+
+            if(!respuesta.success){
+
+                alert(
+
+                    respuesta.message
+
+                );
+
+                return;
+
+            }
+
+            // Eliminar gasto
+            const eliminar = await fetch(
+
+                "/gastos/eliminar",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+
+                        "Content-Type":"application/json"
+
+                    },
+
+                    body:JSON.stringify({
+
+                        id:gastoSeleccionado
+
+                    })
+
+                }
+
+            );
+
+            const resultado = await eliminar.json();
+
+            if(!resultado.success){
+
+                alert(
+
+                    resultado.message
+
+                );
+
+                return;
+
+            }
+
+            alert(
+
+                resultado.message
+
+            );
+
+            location.reload();
+
+        }
+
+    );
+
+document
+    .getElementById("formEditarGasto")
+    .addEventListener(
+
+        "submit",
+
+        async function(e){
+
+            e.preventDefault();
+
+            try{
+
+                const response = await fetch(
+
+                    "/gastos/editar",
+
+                    {
+
+                        method:"POST",
+
+                        headers:{
+
+                            "Content-Type":"application/json"
+
+                        },
+
+                        body:JSON.stringify({
+
+                            id:document.getElementById("editId").value,
+
+                            concepto:document.getElementById("editConcepto").value,
+
+                            valor:document.getElementById("editValor").value
+
+                        })
+
+                    }
+
+                );
+
+                const data = await response.json();
+
+                if(!data.success){
+
+                    alert(data.message);
+
+                    return;
+
+                }
+
+                alert(data.message);
+
+                bootstrap.Modal
+                    .getInstance(
+
+                        document.getElementById(
+
+                            "modalEditarGasto"
+
+                        )
+
+                    )
+                    .hide();
+
+                location.reload();
+
+            }
+
+            catch(error){
+
+                alert(
+
+                    "Ocurrió un error al actualizar el gasto."
+
+                );
+
+            }
+
+        }
+
+    );
+
+</script>
 
 <!-- BOOTSTRAP -->
 <script

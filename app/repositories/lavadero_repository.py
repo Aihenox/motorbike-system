@@ -20,18 +20,14 @@ POSTGRES = os.getenv(
 # REGISTRAR LAVADO
 # ==========================================
 def registrar_lavado_db(
-
     placa,
-
     vehiculo,
-
     tipo_lavado,
-
     valor,
-
+    valor_comision,
     responsable,
-
-    fecha
+    fecha,
+    cortesia
 ):
 
     with conectar() as conn:
@@ -51,13 +47,17 @@ def registrar_lavado_db(
                     vehiculo,
                     tipo_lavado,
                     valor,
+                    valor_comision,
                     responsable,
-                    fecha
+                    fecha,
+                    cortesia
 
                 )
 
                 VALUES (
 
+                    %s,
+                    %s,
                     %s,
                     %s,
                     %s,
@@ -77,9 +77,13 @@ def registrar_lavado_db(
 
                 valor,
 
+                valor_comision,
+
                 responsable,
 
-                fecha
+                fecha,
+
+                cortesia
             ))
 
         # ==========================================
@@ -95,13 +99,17 @@ def registrar_lavado_db(
                     vehiculo,
                     tipo_lavado,
                     valor,
+                    valor_comision,
                     responsable,
-                    fecha
+                    fecha,
+                    cortesia
 
                 )
 
                 VALUES (
 
+                    ?,
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -121,9 +129,13 @@ def registrar_lavado_db(
 
                 valor,
 
+                valor_comision,
+
                 responsable,
 
-                fecha
+                fecha,
+
+                cortesia
             ))
 
         conn.commit()
@@ -640,3 +652,47 @@ def contar_lavados_placa_db(
             0,
             "count"
         )
+
+def placa_ya_tuvo_cortesia_db(placa):
+
+    with conectar() as conn:
+
+        c = conn.cursor()
+
+        if POSTGRES:
+
+            c.execute("""
+
+                SELECT COUNT(*)
+
+                FROM lavados
+
+                WHERE placa = %s
+                AND cortesia = 1
+
+            """, (
+                placa.upper(),
+            ))
+
+        else:
+
+            c.execute("""
+
+                SELECT COUNT(*)
+
+                FROM lavados
+
+                WHERE placa = ?
+                AND cortesia = 1
+
+            """, (
+                placa.upper(),
+            ))
+
+        resultado = c.fetchone()
+
+        return obtener_campo(
+            resultado,
+            0,
+            "count"
+        ) > 0

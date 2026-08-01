@@ -12,7 +12,9 @@ from flask import (
 
     flash,
 
-    send_file
+    send_file,
+
+    jsonify
 )
 
 from flask_login import (
@@ -35,6 +37,19 @@ from app.services.cierre_service import (
     guardar_cierre,
 
     obtener_historial_cierres
+
+)
+
+from app.services.gastos_service import (
+
+    agregar_gasto,
+
+    eliminar_gasto,
+
+    obtener_gasto_por_id,
+
+    actualizar_gasto
+
 )
 
 
@@ -91,17 +106,9 @@ def cierre_caja():
 
                 fecha,
 
-                metricas[
-                    "total_parqueadero"
-                ],
+                metricas["total_parqueadero"],
 
-                metricas[
-                    "total_lavadero"
-                ],
-
-                metricas[
-                    "total_general"
-                ],
+                metricas["total_lavadero"],
 
                 observaciones,
 
@@ -109,7 +116,6 @@ def cierre_caja():
 
                 hora_cierre
             )
-
         except ValueError as error:
 
             flash(
@@ -149,7 +155,57 @@ def cierre_caja():
         total_general=
             metricas[
                 "total_general"
-            ]
+            ],
+
+        gastos=
+            metricas[
+                "gastos"
+            ],
+
+        total_gastos=
+            metricas[
+                "total_gastos"
+            ],
+
+        utilidad=
+            metricas[
+                "utilidad"
+            ],
+
+        pagos_lavadores=
+            metricas[
+                "pagos_lavadores"
+            ],
+
+        total_pago_lavadores=
+            metricas[
+                "total_pago_lavadores"
+            ],
+
+        dinero_esperado=
+            metricas[
+                "dinero_esperado"
+            ],
+
+        saldo_inicial=
+            metricas["saldo_inicial"],
+
+        ingresos_dia=
+            metricas["ingresos_dia"],
+
+        egresos_dia=
+            metricas["egresos_dia"],
+
+        saldo_actual=
+            metricas["saldo_actual"],
+
+        detalle_ingresos=
+            metricas[
+                "detalle_ingresos"],
+
+        detalle_egresos=
+            metricas[
+                "detalle_egresos"]
     )
 
 
@@ -252,3 +308,219 @@ def exportar_cierres_excel():
 
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
+# ==========================================
+# AGREGAR GASTO
+# ==========================================
+@cierre_bp.route(
+
+    "/gastos/agregar",
+
+    methods=["POST"]
+
+)
+@login_required
+@admin_required
+def agregar_gasto_ajax():
+
+    try:
+
+        concepto = request.form.get(
+
+            "concepto",
+
+            ""
+
+        )
+
+        valor = request.form.get(
+
+            "valor",
+
+            0
+
+        )
+
+        ahora = datetime.now(
+
+            ZoneInfo("America/Bogota")
+
+        )
+
+        agregar_gasto(
+
+            fecha=ahora.strftime("%Y-%m-%d"),
+
+            concepto=concepto,
+
+            valor=valor,
+
+            usuario=current_user.usuario,
+
+            hora=ahora.strftime("%H:%M:%S")
+
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "message": "Gasto registrado correctamente."
+
+        })
+
+    except Exception as e:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(e)
+
+        }), 400
+
+# ==========================================
+# ELIMINAR GASTO
+# ==========================================
+@cierre_bp.route(
+
+    "/gastos/eliminar",
+
+    methods=["POST"]
+
+)
+@login_required
+@admin_required
+def eliminar_gasto_ajax():
+
+    try:
+
+        datos = request.get_json()
+
+        gasto_id = datos.get(
+
+            "id"
+
+        )
+
+        if not gasto_id:
+
+            return jsonify({
+
+                "success": False,
+
+                "message":
+                "Id inválido."
+
+            }), 400
+
+        eliminar_gasto(
+
+            gasto_id
+
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "message":
+            "Gasto eliminado correctamente."
+
+        })
+
+    except Exception as e:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(e)
+
+        }), 500
+
+# ==========================================
+# OBTENER GASTO
+# ==========================================
+@cierre_bp.route(
+
+    "/gastos/<int:gasto_id>"
+
+)
+@login_required
+@admin_required
+def obtener_gasto_ajax(
+
+    gasto_id
+
+):
+
+    gasto = obtener_gasto_por_id(
+
+        gasto_id
+
+    )
+
+    if not gasto:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": "Gasto no encontrado."
+
+        }), 404
+
+    return jsonify({
+
+        "success": True,
+
+        "gasto": gasto
+
+    })
+
+# ==========================================
+# EDITAR GASTO
+# ==========================================
+@cierre_bp.route(
+
+    "/gastos/editar",
+
+    methods=["POST"]
+
+)
+@login_required
+@admin_required
+def editar_gasto_ajax():
+
+    try:
+
+        datos = request.get_json()
+
+        actualizar_gasto(
+
+            gasto_id=datos.get("id"),
+
+            concepto=datos.get("concepto"),
+
+            valor=datos.get("valor")
+
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "message": "Gasto actualizado correctamente."
+
+        })
+
+    except Exception as e:
+
+        return jsonify({
+
+            "success": False,
+
+            "message": str(e)
+
+        }), 400

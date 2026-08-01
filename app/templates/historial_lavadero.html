@@ -768,6 +768,15 @@ async function validarAdmin(){
         if(accion === "eliminar"){
 
             eliminarLavado(id);
+
+            return;
+        }
+
+        if(accion === "eliminar_gasto"){
+
+            eliminarGasto(id);
+
+            return;
         }
 
     }catch(error){
@@ -853,6 +862,52 @@ async function abrirEditar(id){
             "Error cargando lavado"
         );
     }
+}
+
+async function eliminarGasto(id){
+
+    try{
+
+        const response = await fetch(
+
+            "/gastos/eliminar",
+
+            {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":"application/json"
+                },
+
+                body:JSON.stringify({
+
+                    id:id
+
+                })
+
+            }
+
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(data.message);
+
+            return;
+
+        }
+
+        location.reload();
+
+    }catch(error){
+
+        alert("Error eliminando el gasto.");
+
+    }
+
 }
 
 async function guardarEdicion(){

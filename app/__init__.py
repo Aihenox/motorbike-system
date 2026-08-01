@@ -119,6 +119,8 @@ def create_app():
 
     from app.routes.cafeteria import cafeteria_bp
 
+    from app.routes.nomina import nomina_bp
+
     # ==========================================
     # REGISTRAR BLUEPRINTS
     # ==========================================
@@ -137,7 +139,8 @@ def create_app():
         recibos_bp,
         tarifas_bp,
         mensualidades_bp,
-        cafeteria_bp
+        cafeteria_bp,
+        nomina_bp
     ]
 
     for blueprint in blueprints:
