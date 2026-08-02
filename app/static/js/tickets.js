@@ -623,7 +623,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>PROPIETARIO:</span><br>
+            <strong>PROPIETARIO:</strong><br>
 
             <strong>${data.propietario}</strong>
 
@@ -631,7 +631,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>VEHÍCULO:</span>
+            <strong>VEHÍCULO:</strong>
 
             <strong>${data.tipo}</strong>
 
@@ -639,7 +639,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>PLACA:</span>
+            <strong>PLACA:</strong>
 
             <strong>${data.placa}</strong>
 
@@ -649,7 +649,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>INICIO:</span>
+            <strong>INICIO:</strong>
 
             <strong>${data.fecha_inicio}</strong>
 
@@ -657,7 +657,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>VENCE:</span>
+            <strong>VENCE:</strong>
 
             <strong>${data.fecha_fin}</strong>
 
@@ -665,7 +665,7 @@ function generarTicketMensualidad(data){
 
         <div class="dato">
 
-            <span>ESTADO:</span>
+            <strong>ESTADO:</strong>
 
             <strong>${data.estado}</strong>
 
