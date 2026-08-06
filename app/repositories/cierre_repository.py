@@ -228,7 +228,7 @@ def obtener_metricas_cierre_db():
 
         # Aquí seguiremos agregando cafetería,
         # mensualidades y otros ingresos.
-        ingresos_dia = total_parqueadero + total_lavadero
+        ingresos_dia = total_parqueadero + total_lavadero + total_cafeteria
 
         # Nómina del día
         _, egresos_nomina = obtener_pago_lavadores_db()
