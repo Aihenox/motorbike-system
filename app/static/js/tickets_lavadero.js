@@ -112,7 +112,7 @@ function generarTicketLavadero(data){
 
             <strong>PLACA:</strong>
 
-            ${data.placa}
+            <strong>${data.placa}</strong>
 
         </div>
 

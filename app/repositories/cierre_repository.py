@@ -5,6 +5,10 @@ from zoneinfo import ZoneInfo
 
 from app.repositories.connection import conectar
 
+from app.repositories.cafeteria_repository import (
+    obtener_total_ventas_hoy_db
+)
+
 from app.repositories.gastos_repository import (
     obtener_total_gastos_db
 )
@@ -213,6 +217,11 @@ def obtener_metricas_cierre_db():
         )
 
         # ==========================================
+        # CAFETERIA
+        # ==========================================
+        total_cafeteria = obtener_total_ventas_hoy_db()
+
+        # ==========================================
         # TOTAL GENERAL
         # ==========================================
         saldo_inicial = obtener_saldo_inicial_db()
@@ -258,12 +267,15 @@ def obtener_metricas_cierre_db():
 
             "total_general": ingresos_dia,
 
-            # Nuevos datos para el resumen financiero
             "detalle_ingresos": {
 
                 "parqueadero": total_parqueadero,
 
-                "lavadero": total_lavadero
+                "lavadero": total_lavadero,
+
+                "cafeteria": total_cafeteria,
+
+                "otros": 0
 
             },
 
