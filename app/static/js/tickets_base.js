@@ -194,21 +194,6 @@ function generarEstilosTicket(){
                 font-weight:bold;
             }
 
-            .terminos{
-
-                margin-top:10px;
-
-                font-size:10px;
-
-                line-height:15px;
-
-                text-align:justify;
-            }
-
-            .terminos p{
-
-                margin-bottom:8px;
-            }
 
             .footer{
 
